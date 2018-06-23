@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+brstores.json
+brstores.default
 
 # C extensions
 *.so
