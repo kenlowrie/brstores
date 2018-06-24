@@ -5,6 +5,25 @@ This class implements the BrStores class, which provides simple
 syncrhonization logic for doing backup/restore operations at the 
 directory level. 
 
+It maintains maintains a dictionary of entries in the following
+format to keep track of data stores:
+
+    storename: { 
+        variationName: { src: "", dest: "", flags: ""}
+        [, variantName2: { src: "", dest: "", flags: ""}, ...]
+        [__default__: "defaultvariantname"]
+    }
+
+
+TODO:
+
+Need to add the csync module as either part of the pylib or as another
+standalone module...
+
+Need a way to timestamp or identify revision to help prevent out of sync issues
+"""
+
+"""
 Copyright 2018 Ken Lowrie
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,17 +37,11 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-TODO:
-
-Need to add the csync module as either part of the pylib or as another
-standalone module...
 """
 
-import os
-import string
-import json
 import logging
+
+import pylib
 
 
 # The class implementation for the exception handling in the underlying classes
@@ -41,20 +54,7 @@ class SyncError(Error):
     def __init__(self, errno, errmsg):
         self.errno = errno
         self.errmsg = errmsg
-        
 
-"""
-dictionary of stores
-
-    storename: { variationName: { src: "", dest: "", flags: ""} }
-
-    Need a way to timestamp or identify revision to help prevent out of sync issues
-
-    The store should be a class (dictionary?) instead of a tuple
-
-"""
-
-import pylib
 
 def context():
     """returns the context object for this script."""
@@ -85,27 +85,29 @@ class BrStores(object):
         self.defaults_basefilename = join(me.whereami(),"brstores.default")
         self.defaults = self._loadDefaults()
         self.storeName = storeName if storeName is not None and isfile(storeName) else self.__getDefaultStore()
-        self.brstores = self.loadStores()
+        self.brstores = self._loadStores()
 
     def __getDefaultStore(self):
         base_filename = "brstores.json" if 'defaultstore' not in self.defaults else self.defaults['defaultstore']
         return base_filename
 
     def _loadJSON(self, base_filename):
-        defaults = {}
+        from json import load
+        dict = {}
         try:
             with open(base_filename, 'r') as fp:
-                defaults = json.load(fp)
+                dict = load(fp)
                 fp.close()
         except IOError:
-            defaults = {}
+            dict = {}
 
-        return defaults
+        return dict
 
     def _saveJSON(self, base_filename, data):
+        from json import dump
         try:
             with open(base_filename, 'w') as fp:
-                json.dump(data, fp, indent=4)
+                dump(data, fp, indent=4)
                 fp.close()
         except IOError:
             return -1
@@ -118,35 +120,13 @@ class BrStores(object):
     def _saveDefaults(self):
         return self._saveJSON(self.defaults_basefilename, self.defaults)
 
-    def saveDefaultStore(self, newDefaultStore):
-        # do some validation
-        from os.path import split, isdir, abspath
-        
-        dir,name = split(newDefaultStore)
-        if dir and not isdir(dir):
-            raise SyncError(4, "[{}] JSON store path doesn't exist.".format(dir))
-
-        self.defaults['defaultstore'] = abspath(newDefaultStore)
-
-        return self._saveDefaults()
-
-    def dumpDefaults(self):
-        message("\nCurrent defaults set in {}\n".format(self.defaults_basefilename), False)
-        count = 0
-        for item in self.defaults:
-            message("\t{}: {}".format(item, self.defaults[item]), False)
-            count += 1
-
-        if count:
-            message("", False)
-
-    def loadStores(self):
+    def _loadStores(self):
         return self._loadJSON(self.storeName)
         
-    def saveStores(self):
+    def _saveStores(self):
         return self._saveJSON(self.storeName, self.brstores)
 
-    def fixSrcDestPaths(self, store):
+    def _fixSrcDestPaths(self, store):
         """Make sure that src has a trailing slash, and dest does not!"""
 
         from sys import _getframe
@@ -163,37 +143,13 @@ class BrStores(object):
 
         return store
     
-    def getTargetSrcDest(self,which,variant,isBackup=True):
-        """Get the data store with src, dest and flags for 'which'."""
-        
-        if which in self.getStores():
-            if (variant == None):
-                store = self.getDefaultVariant(which)
-            else:
-                store = self.getVariant(which,variant)
-            
-            if (store == None): raise SyncError(5,"Invalid store or variant")
-            
-            if (isBackup == True): return store
-            
-            message("RESTORE operation, flipping SRC and DEST...")
-            tmpSrc = store['src']
-            store['src'] = store['dest']
-            store['dest'] = tmpSrc
-            
-            return store
-            
-        raise SyncError(6,"I don't know about any store named [{}]...".format(which))
-        
-        return None
-        
-    def getStores(self):
+    def _getStores(self):
         """Return a list of the data stores in the dictionary."""
         
         return self.brstores.keys()
-        
-    def getVariant(self,which,variant):
-        if which in self.getStores():
+
+    def _getVariant(self,which,variant):
+        if which in self._getStores():
             if variant in self.brstores[which]:
                 message("Located variant [{}] in store [{}] ...".format(variant, which))
                 return self.brstores[which][variant]
@@ -204,27 +160,69 @@ class BrStores(object):
         message("No store named [{}] found!".format(which))
         return None
 
-        
-    def getDefaultVariant(self, which):
-        if which in self.getStores():
+    def _getDefaultVariant(self, which):
+        if which in self._getStores():
             if ('default' in self.brstores[which]):
                 message("Default variant is [{}] ...".format(self.brstores[which]['default']))
                 return self.brstores[which][self.brstores[which]['default']]
-            
+
             if len(self.brstores[which]) == 1:
                 message("Only 1 variant here [{}], so using it...".format(list(self.brstores[which].keys())[0]))
                 return self.brstores[which][list(self.brstores[which].keys())[0]]
-                
+
             message("No default variant and more than one variant for store [{}]".format(which))
             return None
-            
+
         message("No store named [{}] found!".format(which))
         return None
+
+    def _getTargetSrcDest(self,which,variant,isBackup=True):
+        """Get the data store with src, dest and flags for 'which'."""
+        
+        if which in self._getStores():
+            if (variant == None):
+                store = self._getDefaultVariant(which)
+            else:
+                store = self._getVariant(which,variant)
+
+            if (store == None): raise SyncError(5,"Invalid store or variant")
+
+            if (isBackup == True): return store
+
+            message("RESTORE operation, flipping SRC and DEST...")
+            tmpSrc = store['src']
+            store['src'] = store['dest']
+            store['dest'] = tmpSrc
+
+            return store
+
+        raise SyncError(6,"I don't know about any store named [{}]...".format(which))
+
+        return None
+
+    def saveDefaultStore(self, newDefaultStore):
+        from os.path import split, isdir, abspath
+
+        dir,name = split(newDefaultStore)
+        if dir and not isdir(dir):
+            raise SyncError(4, "[{}] JSON store path doesn't exist.".format(dir))
+
+        self.defaults['defaultstore'] = abspath(newDefaultStore)
+
+        return self._saveDefaults()
+
+    def dumpDefaults(self):
+        message("\nCurrent defaults set in {}\n".format(self.defaults_basefilename), False)
+        for item in self.defaults:
+            message("\t{}: {}".format(item, self.defaults[item]), False)
+
+        message("", False)
+        return 0
 
     def syncOperation(self, storeName, variantName, isBackup=True):
         operStr = "backup" if isBackup else "restore"
 
-        store = self.fixSrcDestPaths(self.getTargetSrcDest(storeName,variantName,isBackup))
+        store = self._fixSrcDestPaths(self._getTargetSrcDest(storeName,variantName,isBackup))
     
         from csync import C_Sync
     
@@ -255,7 +253,7 @@ class BrStores(object):
             self.brstores[store] = newVariant
 
         message("Dumping the updated store dictionary to json disk file...")
-        self.saveStores()
+        self._saveStores()
         
         return 0
         
@@ -265,7 +263,7 @@ class BrStores(object):
                 raise SyncError(15,"Store [{}] already exists.".format(newStoreName))
             self.brstores[newStoreName] = self.brstores.pop(curStoreName)
             
-            self.saveStores()
+            self._saveStores()
             message("Store [{}] is now called [{}].".format(curStoreName,newStoreName))
             
             return 0
@@ -280,7 +278,7 @@ class BrStores(object):
                     
                 self.brstores[store][newVariant] = self.brstores[store].pop(curVariant)
                 
-                self.saveStores()
+                self._saveStores()
                 message("Store Variant [{}] is now called [{}].".format(curVariant, newVariant))
                 
                 return 0
@@ -293,7 +291,7 @@ class BrStores(object):
         if( store in self.brstores ):
             self.brstores.pop(store)
             
-            self.saveStores()
+            self._saveStores()
             message("Store [{}] has been removed.".format(store))
             
             return 0
@@ -305,7 +303,7 @@ class BrStores(object):
             if( variant in self.brstores[store] ):
                 self.brstores[store].pop(variant)
                 
-                self.saveStores()
+                self._saveStores()
                 message("Store Variant [{}] has been removed.".format(variant))
                 
                 return 0
@@ -319,7 +317,7 @@ class BrStores(object):
             if( variant in self.brstores[store] ):
                 self.brstores[store][BrStores.DEF_VARIANT_KEY] = variant
                 
-                self.saveStores()
+                self._saveStores()
                 message("Store Variant [{}] is now the default.".format(variant))
                 
                 return 0
@@ -333,7 +331,7 @@ class BrStores(object):
             if(BrStores.DEF_VARIANT_KEY in self.brstores[store] ):
                 self.brstores[store].pop(BrStores.DEF_VARIANT_KEY)
                 
-                self.saveStores()
+                self._saveStores()
                 message("Store [{}] default has been removed.".format(store))
                 
                 return 0
@@ -366,19 +364,21 @@ class BrStores(object):
                                                              flags), False)
 
     def dump(self, short_summary, long_summary):
+        from json import dumps
         if short_summary:
             self.dump_short_summary_header()
-            for store in sorted(self.getStores()):
+            for store in sorted(self._getStores()):
                 self.dump_short_summary(store)
         elif long_summary:
             self.dump_long_summary_header()
-            for store in sorted(self.getStores()):
+            for store in sorted(self._getStores()):
                 self.dump_long_summary(store)
         else:
-            message(json.dumps(self.brstores,indent=4, sort_keys=True), False)
+            message(dumps(self.brstores,indent=4, sort_keys=True), False)
         return 0
         
     def dumpStore(self, store, short_summary, long_summary):
+        from json import dumps
         if( store in self.brstores ):
             if short_summary:
                 self.dump_short_summary_header()
@@ -388,7 +388,7 @@ class BrStores(object):
                 self.dump_long_summary(store)
             else:
                 message("{}\r\n{}\r\n".format(store, 
-                                              json.dumps(self.brstores[store], indent=4, sort_keys=True)), False)
+                                              dumps(self.brstores[store], indent=4, sort_keys=True)), False)
             return 0
             
         raise SyncError(31,"Store [{}] doesn't exist.".format(store))
@@ -415,8 +415,9 @@ class BrStores(object):
                             }
                     }
         }
+        from json import dump
         with open(jsonfile, 'w') as fp:
-            json.dump(stores, fp, indent=4)
+            dump(stores, fp, indent=4)
 
         if makedefault:
             self.saveDefaultStore(jsonfile)
