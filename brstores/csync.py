@@ -1,7 +1,15 @@
 #!/usr/bin/env python
 
-import os
-import sys
+"""
+Simple directory synchronizer based on rsync
+
+This module implements a directory synchronizer which is based on the
+rsync command. It can be used to synchronize the contents of two directories,
+which you would like to keep mirrored.
+"""
+
+from os import system
+from sys import argv, exit, stdin
 
 import pylib
 
@@ -11,7 +19,7 @@ def context():
     try:
         myself = __file__
     except NameError:
-        myself = sys.argv[0]
+        myself = argv[0]
 
     return pylib.context(myself)
 
@@ -30,14 +38,14 @@ class C_Sync:
             me = ctx
         
     def status(self):
-        rc = os.system("rsync -n -va --delete %s %s %s" % (self.flags, self.source, self.destination) )
+        rc = system("rsync -n -va --delete %s %s %s" % (self.flags, self.source, self.destination) )
     
         message("rsync returned %d\r\n" % rc)
     
         return rc
     
     def mirror(self, askFirst=True):
-        rc = os.system("rsync -va --delete %s %s %s" % (self.flags, self.source, self.destination) )
+        rc = system("rsync -va --delete %s %s %s" % (self.flags, self.source, self.destination) )
     
         message("rsync returned %d\r\n" % rc)
     
@@ -49,7 +57,7 @@ class C_Sync:
         
         message("Do you want to sync [%s] to [%s] using flags [%s]" % (self.source,self.destination,self.flags))
         
-        answer = sys.stdin.readline().strip()
+        answer = stdin.readline().strip()
 
         if answer.lower() not in ["yes", "y", "si"]:
             message("You did not enter YES, you entered [%s]\r\n" % answer)
@@ -61,5 +69,5 @@ class C_Sync:
     
 if __name__ == '__main__':
     message("csync is a library module. Not directly callable.")
-    sys.exit(1)
+    exit(1)
     

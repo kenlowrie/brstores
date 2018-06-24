@@ -9,34 +9,15 @@ It maintains maintains a dictionary of entries in the following
 format to keep track of data stores:
 
     storename: { 
-        variationName: { src: "", dest: "", flags: ""}
-        [, variantName2: { src: "", dest: "", flags: ""}, ...]
+        variationName: { src: "", dest: "", flags: ""}[,]
+        [variantName2: { src: "", dest: "", flags: ""}, ...]
         [__default__: "defaultvariantname"]
     }
 
 
 TODO:
 
-Need to add the csync module as either part of the pylib or as another
-standalone module...
-
 Need a way to timestamp or identify revision to help prevent out of sync issues
-"""
-
-"""
-Copyright 2018 Ken Lowrie
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 """
 
 import logging
@@ -48,7 +29,7 @@ import pylib
 class Error(Exception):
     """Base exception class for this module."""
     pass
-    
+
 class SyncError(Error):
     """Various exceptions raised by this module."""
     def __init__(self, errno, errmsg):
@@ -425,7 +406,7 @@ class BrStores(object):
         message("created new JSON data store file: [{}]".format(jsonfile))
         return 0
 
-    
+
 if __name__ == '__main__':
     message('brstores Library Module, not directly callable.', False)
     from sys import exit
