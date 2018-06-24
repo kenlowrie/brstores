@@ -1,9 +1,35 @@
 #!/usr/bin/env python
 
+"""
+This class implements the BrStores class, which provides simple
+syncrhonization logic for doing backup/restore operations at the 
+directory level. 
+
+Copyright 2018 Ken Lowrie
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+TODO:
+
+Need to add the csync module as either part of the pylib or as another
+standalone module...
+"""
+
 import os
 import string
 import json
 import logging
+
 
 # The class implementation for the exception handling in the underlying classes
 class Error(Exception):
@@ -103,6 +129,16 @@ class BrStores(object):
         self.defaults['defaultstore'] = abspath(newDefaultStore)
 
         return self._saveDefaults()
+
+    def dumpDefaults(self):
+        message("\nCurrent defaults set in {}\n".format(self.defaults_basefilename), False)
+        count = 0
+        for item in self.defaults:
+            message("\t{}: {}".format(item, self.defaults[item]), False)
+            count += 1
+
+        if count:
+            message("", False)
 
     def loadStores(self):
         return self._loadJSON(self.storeName)

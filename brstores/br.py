@@ -1,9 +1,25 @@
 #!/usr/bin/env python3
 
+"""
+Command Line Interface to brstores application
+
+Copyright 2018 Ken Lowrie
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 import logging
 
 logging.basicConfig(format='%(module)s:%(levelname)s:%(message)s')
-
 
 """
 TODO:
@@ -14,14 +30,16 @@ TODO:
         pass it in when the object is constructed.
     Add logging
     Review the return code crap, and see if they can be eliminated in favor of just doing exception handling
-    Move this into GitHub.
-    Package this too, and rely on the pylib package. Once that works, apply this
+    Package this app, and rely on the pylib package. Once that works, apply this
         to the avscript app.
 
     Need a switch to show the current brstores.default
     I need to make pylib a dependency from github, but figure out how to
     do this and have it honor the versioning, etc. Otherwise, it won't know
     to update it when I pip install update, right? Figure this out.
+    
+    Add the license info to these files, and also to pylib which is in a
+    separate repository.
 
 """
 
@@ -92,6 +110,9 @@ class BrSync(object):
         subparsers.add_parser('init', 
                               parents=[json_store_parser]).set_defaults(func=self.init)
 
+        subparsers.add_parser('defaults',
+                              help="display defaults").set_defaults(func=self.defaults)
+                              
         subparsers.add_parser('sdjs', 
                               parents=[json_store_parser], 
                               help='set def JSON store repo. synonyms: setDefaultJSONstore').set_defaults(func=self.sdjs)
@@ -189,7 +210,11 @@ class BrSync(object):
             return BrStores().initialize(self.args.jsonfile, self.args.makedefault)
         except SyncError as se:
             return self._se_exception(se)
-        
+
+    def defaults(self):
+        logging.debug("defaults:{}".format(self.args))
+        BrStores().dumpDefaults()
+
     def sdjs(self):
         logging.debug("sdjs:{}".format(self.args))
         try:
