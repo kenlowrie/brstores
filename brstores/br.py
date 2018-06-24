@@ -17,6 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import logging
 
 logging.basicConfig(format='%(module)s:%(levelname)s:%(message)s')
@@ -26,21 +27,13 @@ TODO:
     Make pylib a site package, and put it in GitHub, and install as site package.
     Implement the unittests for it
     Write the docstrings
-    Add ability to override the underlying message() formatter with my own; i.e.
-        pass it in when the object is constructed.
-    Add logging
-    Review the return code crap, and see if they can be eliminated in favor of just doing exception handling
     Package this app, and rely on the pylib package. Once that works, apply this
         to the avscript app.
 
-    Need a switch to show the current brstores.default
     I need to make pylib a dependency from github, but figure out how to
     do this and have it honor the versioning, etc. Otherwise, it won't know
     to update it when I pip install update, right? Figure this out.
     
-    Add the license info to these files, and also to pylib which is in a
-    separate repository.
-
 """
 
 from brstores import BrStores, SyncError, message, me
@@ -102,7 +95,7 @@ class BrSync(object):
         dump_parser.add_argument('-ls', '--long', help="long summary information only", action="store_true")
 
         # Now add all the subparsers to the main parser
-        subparsers = self._parser.add_subparsers(title="operations", dest="operation", description="valid operations", metavar='{i,sdjs,b,r,as,us,rens,renv,setd,rems,remv,remd,dump}')
+        subparsers = self._parser.add_subparsers(title="operations", dest="operation", description="valid operations", metavar='{i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump}')
 
         subparsers.add_parser('i', 
                               parents=[json_store_parser], 
@@ -213,7 +206,10 @@ class BrSync(object):
 
     def defaults(self):
         logging.debug("defaults:{}".format(self.args))
-        BrStores().dumpDefaults()
+        try:
+            return BrStores().dumpDefaults()
+        except SyncError as se:
+            return self._se_exception(se)
 
     def sdjs(self):
         logging.debug("sdjs:{}".format(self.args))
@@ -323,12 +319,12 @@ class BrSync(object):
         return self.args.func
 
     def run(self, arguments=None):
-        self.parse_args(arguments)()
+        return self.parse_args(arguments)()
 
 def brsync_command_line(arguments=None):
     brs = BrSync()
     
-    brs.run(arguments)
+    return brs.run(arguments)
 
 def brsync_runtests(arguments=None):
     logging.getLogger().setLevel(logging.INFO)
@@ -371,17 +367,20 @@ def brsync_runtests(arguments=None):
         brs.parse_args(argset.split())
         logging.info("ARGSET: ({}):\n{}\n".format(argset, pformat(brs.args.__dict__)))
 
+    return 0
+
 def brsync_entry():
     from sys import argv
+    rc = 0
     if(len(argv) > 1):
         if(argv[1].lower() in ['-t', '--test']):
-            brsync_runtests()
+            rc = brsync_runtests()
         else:
-            brsync_command_line(argv[1:])
+            rc = brsync_command_line(argv[1:])
     else:
         message("usage: br [-h | --help] [-t | --test] command [options ...]", False)
 
-    return 0
+    return rc
 
 if __name__ == '__main__':
     from sys import exit
