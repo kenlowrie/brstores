@@ -1,0 +1,197 @@
+{
+    "abbotthouse": {
+        "desktop": {
+            "dest": "/Volumes/KenL100b/cL/abbouthouse", 
+            "flags": "", 
+            "src": "/data/cL/abbotthouse/"
+        }, 
+        "laptop": {
+            "dest": "/Volumes/KenL100b/cL/abbouthouse", 
+            "flags": "", 
+            "src": "~/Desktop/DNB/cL/abbotthouse/"
+        }
+    }, 
+    "arc": {
+        "def": {
+            "dest": "/Volumes/dr16tb/archives", 
+            "flags": "", 
+            "src": "/Volumes/th15tb/archives"
+        }
+    }, 
+    "bracken": {
+        "desktop": {
+            "dest": "/Volumes/KenL100b/cL/brackensaloon/2018", 
+            "flags": "", 
+            "src": "/data/cL/brackensaloon/2018"
+        }, 
+        "laptop": {
+            "dest": "/Volumes/KenL100b/cL/brackensaloon/2018", 
+            "flags": "", 
+            "src": "~/Desktop/DNB/cL/brackensaloon/2018"
+        }
+    }, 
+    "buddyvargas": {
+        "desktop": {
+            "dest": "/Volumes/KenL100b/cL/buddyvargas", 
+            "flags": "", 
+            "src": "/data/cL/buddyvargas/"
+        }, 
+        "laptop": {
+            "dest": "/Volumes/KenL100b/cL/buddyvargas", 
+            "flags": "", 
+            "src": "~/Desktop/DNB/cL/buddyvargas/"
+        }
+    }, 
+    "cl": {
+        "def": {
+            "dest": "/Volumes/th15tb/backups/cL", 
+            "flags": "", 
+            "src": "/data/cL"
+        }
+    }, 
+    "dubois": {
+        "desktop": {
+            "dest": "/Volumes/KenL100b/cL/dubois-doc", 
+            "flags": "", 
+            "src": "/data/cL/dubois-doc/"
+        }, 
+        "laptop": {
+            "dest": "/Volumes/KenL100b/cL/dubois-doc", 
+            "flags": "", 
+            "src": "~/Desktop/DNB/cL/dubois-doc/"
+        }
+    }, 
+    "foo": {
+        "def": {
+            "dest": "destpath", 
+            "flags": "", 
+            "src": "srcpath"
+        }
+    }, 
+    "helpusell": {
+        "desktop": {
+            "dest": "/Volumes/KenL100b/cL/helpusell", 
+            "flags": "", 
+            "src": "/data/cL/helpusell/"
+        }, 
+        "laptop": {
+            "dest": "/Volumes/KenL100b/cL/helpusell", 
+            "flags": "", 
+            "src": "~/Desktop/DNB/cL/helpusell/"
+        }
+    }, 
+    "hsv": {
+        "folder": {
+            "dest": "~/Desktop/DNB/hhcssvoTMP", 
+            "flags": "", 
+            "src": "~/Desktop/hhcssvo"
+        }, 
+        "test": {
+            "dest": "/Users/ken/Desktop/cLart", 
+            "flags": "", 
+            "src": "/data/cL/art/"
+        }
+    }, 
+    "offsitepix": {
+        "pd1": {
+            "dest": "/Volumes/bu_disk1/media", 
+            "flags": "", 
+            "src": "/Volumes/th15tb/media"
+        }, 
+        "pd2": {
+            "dest": "/Volumes/bu_disk2/media", 
+            "flags": "", 
+            "src": "/Volumes/th15tb/media"
+        }
+    }, 
+    "pix": {
+        "def": {
+            "dest": "/Volumes/dr16tb/backups/media", 
+            "flags": "", 
+            "src": "/Volumes/th15tb/media"
+        }
+    }, 
+    "sn": {
+        "def": {
+            "dest": "/Volumes/th15tb/backups/SN", 
+            "flags": "", 
+            "src": "/data/SN"
+        }
+    }, 
+    "src": {
+        "def": {
+            "dest": "/Volumes/th15tb/backups/src", 
+            "flags": "--filter='exclude webdev/***'", 
+            "src": "/data/src"
+        }
+    }, 
+    "wolverine": {
+        "desktop": {
+            "dest": "/Volumes/KenL100b/cL/wolverine", 
+            "flags": "", 
+            "src": "/data/cL/photos/wolverine"
+        }, 
+        "laptop": {
+            "dest": "/Volumes/KenL100b/cL/wolverine", 
+            "flags": "", 
+            "src": "~/Desktop/DNB/cL/photos/wolverine"
+        }
+    }, 
+    "work": {
+        "def": {
+            "dest": "/Volumes/th15tb/backups/work", 
+            "flags": "", 
+            "src": "/data/work"
+        }
+    }
+}
+    Data store  Variant Name  
+----------------------------------------
+   abbotthouse: desktop       
+   abbotthouse: laptop        
+           arc: def           
+       bracken: desktop       
+       bracken: laptop        
+   buddyvargas: desktop       
+   buddyvargas: laptop        
+            cl: def           
+        dubois: desktop       
+        dubois: laptop        
+           foo: def           
+     helpusell: desktop       
+     helpusell: laptop        
+           hsv: folder        
+           hsv: test          
+    offsitepix: pd1           
+    offsitepix: pd2           
+           pix: def           
+            sn: def           
+           src: def           
+     wolverine: desktop       
+     wolverine: laptop        
+          work: def           
+    Data store    Variant Name  <Src>, <Dest>, [Flags]
+-------------------------------------------------------------------------------
+   abbotthouse:        desktop </data/cL/abbotthouse/>, </Volumes/KenL100b/cL/abbouthouse>, []
+   abbotthouse:         laptop <~/Desktop/DNB/cL/abbotthouse/>, </Volumes/KenL100b/cL/abbouthouse>, []
+           arc:            def </Volumes/th15tb/archives>, </Volumes/dr16tb/archives>, []
+       bracken:        desktop </data/cL/brackensaloon/2018>, </Volumes/KenL100b/cL/brackensaloon/2018>, []
+       bracken:         laptop <~/Desktop/DNB/cL/brackensaloon/2018>, </Volumes/KenL100b/cL/brackensaloon/2018>, []
+   buddyvargas:        desktop </data/cL/buddyvargas/>, </Volumes/KenL100b/cL/buddyvargas>, []
+   buddyvargas:         laptop <~/Desktop/DNB/cL/buddyvargas/>, </Volumes/KenL100b/cL/buddyvargas>, []
+            cl:            def </data/cL>, </Volumes/th15tb/backups/cL>, []
+        dubois:        desktop </data/cL/dubois-doc/>, </Volumes/KenL100b/cL/dubois-doc>, []
+        dubois:         laptop <~/Desktop/DNB/cL/dubois-doc/>, </Volumes/KenL100b/cL/dubois-doc>, []
+           foo:            def <srcpath>, <destpath>, []
+     helpusell:        desktop </data/cL/helpusell/>, </Volumes/KenL100b/cL/helpusell>, []
+     helpusell:         laptop <~/Desktop/DNB/cL/helpusell/>, </Volumes/KenL100b/cL/helpusell>, []
+           hsv:         folder <~/Desktop/hhcssvo>, <~/Desktop/DNB/hhcssvoTMP>, []
+           hsv:           test </data/cL/art/>, </Users/ken/Desktop/cLart>, []
+    offsitepix:            pd1 </Volumes/th15tb/media>, </Volumes/bu_disk1/media>, []
+    offsitepix:            pd2 </Volumes/th15tb/media>, </Volumes/bu_disk2/media>, []
+           pix:            def </Volumes/th15tb/media>, </Volumes/dr16tb/backups/media>, []
+            sn:            def </data/SN>, </Volumes/th15tb/backups/SN>, []
+           src:            def </data/src>, </Volumes/th15tb/backups/src>, [--filter='exclude webdev/***']
+     wolverine:        desktop </data/cL/photos/wolverine>, </Volumes/KenL100b/cL/wolverine>, []
+     wolverine:         laptop <~/Desktop/DNB/cL/photos/wolverine>, </Volumes/KenL100b/cL/wolverine>, []
+          work:            def </data/work>, </Volumes/th15tb/backups/work>, []
