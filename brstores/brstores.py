@@ -59,6 +59,8 @@ def message(msgstr, prefix=True):
 
 class BrStores(object):
     DEF_VARIANT_KEY = "__default__"
+    DEF_JSON_STORE = "brstores.json"
+    DEF_STORE_KEY = "defaultstore"
 
     def __init__(self, storeName=None):
         from os.path import isfile, join
@@ -69,7 +71,7 @@ class BrStores(object):
         self.brstores = self._loadStores()
 
     def __getDefaultStore(self):
-        base_filename = "brstores.json" if 'defaultstore' not in self.defaults else self.defaults['defaultstore']
+        base_filename = BrStores.DEF_JSON_STORE if BrStores.DEF_STORE_KEY not in self.defaults else self.defaults[BrStores.DEF_STORE_KEY]
         return base_filename
 
     def _loadJSON(self, base_filename):
@@ -143,9 +145,9 @@ class BrStores(object):
 
     def _getDefaultVariant(self, which):
         if which in self._getStores():
-            if ('default' in self.brstores[which]):
-                message("Default variant is [{}] ...".format(self.brstores[which]['default']))
-                return self.brstores[which][self.brstores[which]['default']]
+            if (BrStores.DEF_VARIANT_KEY in self.brstores[which]):
+                message("Default variant is [{}] ...".format(self.brstores[which][BrStores.DEF_VARIANT_KEY]))
+                return self.brstores[which][self.brstores[which][BrStores.DEF_VARIANT_KEY]]
 
             if len(self.brstores[which]) == 1:
                 message("Only 1 variant here [{}], so using it...".format(list(self.brstores[which].keys())[0]))
@@ -181,16 +183,23 @@ class BrStores(object):
 
         return None
 
-    def saveDefaultStore(self, newDefaultStore):
+    def saveDefaultJSONStore(self, newDefaultStore):
         from os.path import split, isdir, abspath
 
         dir,name = split(newDefaultStore)
         if dir and not isdir(dir):
             raise SyncError(4, "[{}] JSON store path doesn't exist.".format(dir))
 
-        self.defaults['defaultstore'] = abspath(newDefaultStore)
+        self.defaults[BrStores.DEF_STORE_KEY] = abspath(newDefaultStore)
+        message("Setting default store to {}".format(self.defaults[BrStores.DEF_STORE_KEY]))
 
         return self._saveDefaults()
+
+    def getDefaultJSONStore(self):
+        if BrStores.DEF_STORE_KEY in self.defaults:
+            return self.defaults[BrStores.DEF_STORE_KEY]
+
+        return ''
 
     def dumpDefaults(self):
         message("\nCurrent defaults set in {}\n".format(self.defaults_basefilename), False)
@@ -292,7 +301,16 @@ class BrStores(object):
             raise SyncError(18,"Variant [{}] not found in store [{}]".format(variant, store))
         
         raise SyncError(18,"Store [{}] doesn't exist.".format(store))
-        
+
+    def getDefault(self,store):
+        if( store in self.brstores ):
+            if (BrStores.DEF_VARIANT_KEY in self.brstores[store]):
+                return self.brstores[store][BrStores.DEF_VARIANT_KEY]
+
+            return None
+
+        raise SyncError(20,"Store [{}] doesn't exist.".format(store))
+
     def setDefault(self,store,variant):        
         if( store in self.brstores ):
             if( variant in self.brstores[store] ):
@@ -401,7 +419,7 @@ class BrStores(object):
             dump(stores, fp, indent=4)
 
         if makedefault:
-            self.saveDefaultStore(jsonfile)
+            self.saveDefaultJSONStore(jsonfile)
 
         message("created new JSON data store file: [{}]".format(jsonfile))
         return 0
