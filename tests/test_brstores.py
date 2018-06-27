@@ -55,11 +55,19 @@ from unittest import TestCase, TestLoader, TextTestRunner
 
 from brstores import br
 
+DEFAULT_STORE = './test_brstores.json'
+
 def setUpModule():
     print("setup module")
     # remove the temp_brstores.json if it exists (here and teardown)
+    # should I remember and reset the default store? Probably...
+    from os.path import isfile
+    from os import unlink
+    if isfile(DEFAULT_STORE):
+        unlink(DEFAULT_STORE)
     from brstores import BrStores
-    BrStores().saveDefaultStore('./test_brstores.json')
+    print("Current default JSON file is: {}".format(BrStores().getDefaultJSONStore()))
+    BrStores().saveDefaultJSONStore(DEFAULT_STORE)
     pass
 
 def tearDownModule():
@@ -98,6 +106,22 @@ class TestBrStoresClass(TestCase):
                 data = myfile.read()
             self.assertEqual(self.capturedOutput.getvalue(), data)
 
+    def test_init(self):
+        from os import unlink
+        from os.path import isfile
+        new_store_1 = './test_make_new_store.json'
+        new_store_2 = './test_make_new_store_make_default.json'
+        self.brs.run('i {}'.format(new_store_1).split())
+        self.brs.run('defaults'.split())
+        self.brs.run('init {} -md'.format(new_store_2).split())
+        self.brs.run('defaults'.split())
+        self.brs.run('sdjs {}'.format(DEFAULT_STORE).split())
+        unlink(new_store_1)
+        unlink(new_store_2)
+        self.assertEqual(isfile(new_store_1),False)
+        self.assertEqual(isfile(new_store_2),False)
+        self.process('init')
+        
     def test_help(self):
         with self.assertRaises(SystemExit):
             self.brs.run(['-h'])
@@ -107,7 +131,17 @@ class TestBrStoresClass(TestCase):
                 self.brs.run(help.split())
         self.process('help')
 
-    def test_dump(self):
+    def test_addstore(self):
+        self.brs.run('as test1 test_dirs/test1/src test_dirs/test1/dest'.split())
+        self.brs.run('dump -s test1'.split())
+        self.process('addstore')
+        pass
+
+    def test_skeleton(self):
+        print("this is a skeleton test")
+        self.process('skeleton')
+
+    def test_zdump(self):
         self.brs.run('dump'.split())
         self.brs.run('dump -ss'.split())
         self.brs.run('dump -ls'.split())
@@ -117,4 +151,5 @@ class TestBrStoresClass(TestCase):
 
 if __name__ == '__main__':
     suite3 = TestLoader().loadTestsFromTestCase(TestBrStoresClass)
+    #suite3.sortTestMethodsUsing = None     # this must be before loadTests...
     TextTestRunner(verbosity=2).run(suite3)
