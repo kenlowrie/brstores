@@ -73,6 +73,7 @@ import sys
 from unittest import TestCase, TestLoader, TextTestRunner
 
 from brstores import br
+from brstores.brstores import SyncError
 
 # TODO: This belongs in pylib
 _pushdstack = []
@@ -91,7 +92,6 @@ def pushd(dir=None):
     global _pushdstack
     from os import getcwd, chdir
 
-    print("pushing: {}".format(dir))
     if dir == None:
         dir = getcwd()
 
@@ -152,7 +152,9 @@ def setup_testdirs():
 
 def setUpModule():
     print("setup module")
-    setup_testdirs()
+    
+    #setup_testdirs()
+    
     # remove the temp_brstores.json if it exists (here and teardown)
     # should I remember and reset the default store? Probably...
     from os.path import isfile
@@ -168,17 +170,19 @@ def tearDownModule():
     print("teardown module")
     global temp_testdir
 
-    pushd(parent(temp_testdir))
-    from os import getcwd, system
+    if pushd(parent(temp_testdir)):
+        from os import getcwd, system
 
-    # TODO: make this pure python, no rm -rf...
+        # TODO: make this pure python, no rm -rf...
     
-    print("{}".format(getcwd()))
+        print("Removing {}".format(getcwd()))
 
-    system("echo rm -rf {}".format(temp_testdir))
+        system("echo rm -rf {}".format(temp_testdir))
 
-    popd()
-    print("{}".format(getcwd()))
+        popd()
+        print("{}".format(getcwd()))
+    else:
+        print("Unable to chdir to {}".format(parent(temp_testdir)))
 
 
 class TestBrStoresClass(TestCase):
@@ -212,36 +216,101 @@ class TestBrStoresClass(TestCase):
                 data = myfile.read()
             self.assertEqual(self.capturedOutput.getvalue(), data)
 
-    def test_init(self):
+    def test_0_init(self):
         from os import unlink
         from os.path import isfile
+        self.brs.run('defaults'.split())
+        print("Current JSON store contents (should be empty):")
+        self.brs.run(['dump'])      # dump current store, should be empty
         new_store_1 = './test_make_new_store.json'
         new_store_2 = './test_make_new_store_make_default.json'
         self.brs.run('i {}'.format(new_store_1).split())
+        print("Newly created JSON store contents:")
+        self.brs.run(['dump', '-j', '{}'.format(new_store_1)])
         self.brs.run('defaults'.split())
         self.brs.run('init {} -md'.format(new_store_2).split())
+        print("Newly created default JSON store contents:")
+        self.brs.run(['dump'])
         self.brs.run('defaults'.split())
         self.brs.run('sdjs {}'.format(DEFAULT_STORE).split())
+        print("Previous JSON store contents (should still be empty):")
+        self.brs.run(['dump'])
         unlink(new_store_1)
         unlink(new_store_2)
         self.assertEqual(isfile(new_store_1),False)
         self.assertEqual(isfile(new_store_2),False)
         self.process('init')
         
-    def test_help(self):
+    def test_10_help(self):
         with self.assertRaises(SystemExit):
             self.brs.run(['-h'])
-        for help in ['i -h', 'b -h', 'r -h', 'as -h', 'dump -h']:
+
+        with self.assertRaises(SystemExit):
+            self.brs.run(['--help'])
+
+        help_cmds = ['i -h', 'init --help', 'defaults --help', 
+                     'sdjs --help', 'setDefaultJSONstore -h',
+                     'b -h', 'bu --help', 'backup -h',
+                     'r -h', 're --help', 'restore --help', 
+                     'addStore --help', 'as -h', 
+                     'updateStore -h', 'us --help', 
+                     'rens -h', 'renameStore --help',
+                     'renv --help', 'renameVariant -h',
+                     'setd -h', 'setDefault --help',
+                     'rems --help', 'removeStore -h',
+                     'remv -h', 'removeVariant --help',
+                     'remd --help', 'removeDefault -h',
+                     'dump -h',
+        ]
+        for help in help_cmds:
             print('{}\n{}\n{}'.format('-'*40, help, '-'*40))
             with self.assertRaises(SystemExit):
                 self.brs.run(help.split())
         self.process('help')
 
-    def test_addstore(self):
+    def test_20_addstore(self):
         self.brs.run('as test1 test_dirs/test1/src test_dirs/test1/dest'.split())
         self.brs.run('dump -s test1'.split())
+        self.brs.run(['addStore', 'test2', 'src/path/1', 
+                      '-f', ' --temp-dir=/temp/dir -h --ipv6 -0 --timeout=25',
+                      '-v', 'variant1', 'dest/path/3',
+                     ])
+        self.brs.run('dump -s test2'.split())
+        self.brs.run('as test3 test_dirs/test3a/src test_dirs/test3a/dest -v variant3a'.split())
+        self.brs.run('dump -s test3'.split())
+        self.brs.run('as -v variant3b test3 test_dirs/test3b/src test_dirs/test3b/dest'.split())
+        self.brs.run('dump -s test3'.split())
+        self.brs.run('as test3 -v variant3c test_dirs/test3c/src test_dirs/test3c/dest'.split())
+        self.brs.run('dump -s test3'.split())
+        self.brs.run('as test3 test_dirs/test3d/src -v variant3d test_dirs/test3d/dest'.split())
+        self.brs.run('dump -s test3'.split())
+
         self.process('addstore')
-        pass
+
+    def test_21_updatestore(self):
+        self.brs.run('dump -s test1'.split())
+        self.brs.run('us test1 test_dirs/test1/src test_dirs/test1/destNEW'.split())
+        self.brs.run('dump -s test1'.split())
+        self.brs.run('dump -s test2'.split())
+        self.brs.run(['updateStore', 'test2', 'src/path/1/NEW', 
+                      '-f', ' --temp-dir=/temp/dir -h --ipv4 -0 --timeout=25',
+                      '-v', 'variant1', 'dest/path/3',
+                     ])
+        self.brs.run('dump -s test2'.split())
+
+        try:
+            self.brs.run('us test99 src/willfail dest/betterfail'.split())
+        except SyncError as se:
+            print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        try:
+            self.brs.run('us test2 src/willfail dest/betterfail -v variant99'.split())
+        except SyncError as se:
+            print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        self.brs.run(['dump'])
+
+        self.process('updatestore')
 
     def test_skeleton(self):
         print("this is a skeleton test")
