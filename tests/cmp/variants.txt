@@ -1,0 +1,51 @@
+test variant logic
+{
+    "test1": {
+        "def": {
+            "dest": "test_dirs/test1/destNEW", 
+            "flags": "", 
+            "src": "test_dirs/test1/src"
+        }
+    }, 
+    "test2": {
+        "variant1": {
+            "dest": "dest/path/3", 
+            "flags": " --temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+            "src": "src/path/1/NEW"
+        }
+    }, 
+    "test3": {
+        "variant3a": {
+            "dest": "test_dirs/test3a/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3a/src"
+        }, 
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3b/src"
+        }, 
+        "variant3c": {
+            "dest": "test_dirs/test3c/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3c/src"
+        }, 
+        "variant3d": {
+            "dest": "test_dirs/test3d/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3d/src"
+        }
+    }
+}
+CMD: setd
+usage: br setd [-h] [-j JSONFILE] store variant
+br setd: error: too few arguments
+CMD: setd test3
+usage: br setd [-h] [-j JSONFILE] store variant
+br setd: error: too few arguments
+CMD: setd test3 -v no_switch_for_variant
+usage: br [-h] [-d] [-pv]
+          {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump} ...
+br: error: unrecognized arguments: -v
+Expected SyncError Exception: 20:Store [test_not_a_store] doesn't exist.
+Expected SyncError Exception: 20:Variant [invalid_variant] not found in store [test3]
