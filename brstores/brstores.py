@@ -232,12 +232,16 @@ class BrStores(object):
         if (store in self.brstores):
             # store is there, see if this is a new variant
             if variant in self.brstores[store]:
-                if (update == False): raise SyncError(3,"store [{}][{}] already exists".format(store, variant))
+                if (update == False): raise SyncError(3,"store [{}] variant [{}] already exists".format(store, variant))
+            elif update is True:
+                raise SyncError(3,"store [{}] variant [{}] does not exist, cannot update.".format(store, variant))
 
             updType = "Updating" if update else "Adding"
             
             message("{} new variant [{}] to store [{}]".format(updType, variant, store))                
             self.brstores[store][variant] = newStorePaths
+        elif update is True:
+                raise SyncError(3,"store [{}] does not exist, cannot update.".format(store))
         else:
             message("Adding new store [{}]".format(store))
             self.brstores[store] = newVariant
