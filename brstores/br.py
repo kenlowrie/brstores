@@ -169,7 +169,8 @@ class BrSync(object):
                               parents=[dump_parser, store_opt_parser],
                               help='dump the stores JSON file or the named store').set_defaults(func=self.dump)
 
-        self.args = None
+        self._args = None
+        self._testing = False
 
     @property
     def args(self):
@@ -179,7 +180,17 @@ class BrSync(object):
     def args(self, args):
         self._args = args
 
+    @property
+    def testing(self):
+        return self._testing
+
+    @testing.setter
+    def testing(self, testingflag):
+        self._testing = testingflag
+
     def _se_exception(self, se):
+        if self.testing:
+            raise
         logging.error("{}:{}".format(se.errno, se.errmsg))
         return se.errno
 
@@ -243,7 +254,10 @@ class BrSync(object):
 
     def updateStore(self):
         logging.info("updateStore:{}".format(self.args))
-        return self._as(True)
+        try:
+            return self._as(True)
+        except SyncError as se:
+            self._se_exception(se)
                 
     def renameStore(self):
         logging.info("renameStore:{}".format(self.args))
