@@ -18,21 +18,9 @@ test5 - extra files in both
 
 Test design:
 
-1. Init a new brstores.json - make default
-2. Init a new brstores.json - do not make default
-3. Make brstores2.json the default
-4. Dump it
-5. Add a store
-6. Add variants
-7. Make default variant
-8. Test default variant backup - NOT HERE, LATER
-9. Rename variant
+00. Call each one with no parms, missing parms, invalid parms, switches
 10. Rename store
-11. Remove default variant
-12. Remove variant
 13. Remove store
-14. Dump stores
-15. Dump specific store
 16. Create a second brstores.json
 17. Test everything using the -j override
 18. Test debug flag
@@ -199,10 +187,13 @@ class TestBrStoresClass(TestCase):
     def setUp(self):
         self.capturedOutput = StringIO.StringIO()     # Create StringIO object
         sys.stdout = self.capturedOutput              # Redirect sys.stdout
+        sys.stderr = self.capturedOutput
         self.brs = br.BrSync()
+        self.brs.testing = True
 
     def tearDown(self):
         sys.stdout = sys.__stdout__    # Reset redirect.
+        sys.stderr = sys.__stderr__
         del self.brs
         self.brs = None
         del self.capturedOutput
@@ -311,6 +302,36 @@ class TestBrStoresClass(TestCase):
         self.brs.run(['dump'])
 
         self.process('updatestore')
+
+    def test_31_variants(self):
+        print("test variant logic")
+        self.brs.run(['dump'])
+
+        # Invalid / Missing parameter tests
+        for sub_command in ['setd', 
+                            'setd test3',
+                            'setd test3 -v no_switch_for_variant', 
+                           ]:
+            print("CMD: {}".format(sub_command))
+            with self.assertRaises(SystemExit):
+                self.brs.run(sub_command.split())
+
+        # Things that will raise exceptions from BrStores()
+        for sub_command in ['setd test_not_a_store variant3d', 
+                            'setd test3 invalid_variant',
+                           ]:
+            try:
+                self.brs.run(sub_command.split())
+            except SyncError as se:
+                print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        # 7a. Make default variant
+        # 7b. Try to make non-existant variant default
+        # 9a. Rename variant
+        # 9b. Rename default variant, make sure __default__ is updated
+        # 9c. Remove default variant, make sure __default__ is removed
+        # 9d. Remove variant
+        self.process('variants')
 
     def test_skeleton(self):
         print("this is a skeleton test")
