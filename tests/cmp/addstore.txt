@@ -1,0 +1,96 @@
+brstores: Adding new store [test1]
+brstores: Dumping the updated store dictionary to json disk file...
+test1
+{
+    "def": {
+        "dest": "test_dirs/test1/dest", 
+        "flags": "", 
+        "src": "test_dirs/test1/src"
+    }
+}
+
+brstores: Adding new store [test2]
+brstores: Dumping the updated store dictionary to json disk file...
+test2
+{
+    "variant1": {
+        "dest": "dest/path/3", 
+        "flags": " --temp-dir=/temp/dir -h --ipv6 -0 --timeout=25", 
+        "src": "src/path/1"
+    }
+}
+
+brstores: Adding new store [test3]
+brstores: Dumping the updated store dictionary to json disk file...
+test3
+{
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3a/src"
+    }
+}
+
+brstores: Adding new variant [variant3b] to store [test3]
+brstores: Dumping the updated store dictionary to json disk file...
+test3
+{
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3a/src"
+    }, 
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3b/src"
+    }
+}
+
+brstores: Adding new variant [variant3c] to store [test3]
+brstores: Dumping the updated store dictionary to json disk file...
+test3
+{
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3a/src"
+    }, 
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3b/src"
+    }, 
+    "variant3c": {
+        "dest": "test_dirs/test3c/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3c/src"
+    }
+}
+
+brstores: Adding new variant [variant3d] to store [test3]
+brstores: Dumping the updated store dictionary to json disk file...
+test3
+{
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3a/src"
+    }, 
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3b/src"
+    }, 
+    "variant3c": {
+        "dest": "test_dirs/test3c/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3c/src"
+    }, 
+    "variant3d": {
+        "dest": "test_dirs/test3d/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3d/src"
+    }
+}
+
