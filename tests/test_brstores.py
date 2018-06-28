@@ -25,7 +25,7 @@ Test design:
 5. Add a store
 6. Add variants
 7. Make default variant
-8. Test default variant backup
+8. Test default variant backup - NOT HERE, LATER
 9. Rename variant
 10. Rename store
 11. Remove default variant
@@ -37,7 +37,26 @@ Test design:
 17. Test everything using the -j override
 18. Test debug flag
 19. Test pv flag
-20.
+20. Add all the stores for the backup/restore operations
+20a. Unzip the test_dirs.zip into the temp/backup and temp/restore areas
+20b. Unzip the test_dirs_backup.zip into temp/results/backup
+20c. Unzip the test_dirs_restore.zip into temp/results/restore
+21a. Test backup test1
+21b. Test backup test2
+21c. Test backup test3
+21d. Test backup test4
+21e. Test backup test5
+21f. Test restore test1
+21g. Test restore test2
+21h. Test restore test3
+21i. Test restore test4
+21j. Test restore test5
+22. Remove all the stores for the backup/restore operations
+
+filecmp the backup/* to temp/results/backup
+filecmp the restore/* to temp/results/restore
+
+remove the backup, restore and results folders.
 
 """
 
@@ -55,10 +74,85 @@ from unittest import TestCase, TestLoader, TextTestRunner
 
 from brstores import br
 
+# TODO: This belongs in pylib
+_pushdstack = []
+
+# TODO: this should throw exceptions if it fails.
+
+def parent(pathspec):
+    from os.path import split
+    path, filename = split(pathspec)
+
+    return path
+
+def pushd(dir=None):
+    """Set current working directory to 'dir' and save where we are now on a stack.
+    Later you can use popd to restore the original directory"""
+    global _pushdstack
+    from os import getcwd, chdir
+
+    print("pushing: {}".format(dir))
+    if dir == None:
+        dir = getcwd()
+
+    if not isinstance(dir,type('')):
+        return False
+
+    _pushdstack.append(getcwd())
+
+    try:
+        chdir(dir)
+        err = 0
+    except OSError:
+        err = 1
+
+    if err == 1:
+        _pushdstack.pop()
+        return False
+
+    return True
+
+def popd():
+    """Set the current working directory back to what it was when pushd was called"""
+    global _pushdstack
+    from os import chdir
+
+    if len(_pushdstack) == 0:
+        return False
+
+    try:
+        chdir(_pushdstack.pop())
+        err = 0
+    except OSError:
+        err = 1
+
+    return err == 0
+
+
 DEFAULT_STORE = './test_brstores.json'
+temp_testdir = ''
+
+def setup_testdirs():
+    from shutil import copy2
+    from os.path import isfile, isdir, join
+    from tempfile import mkdtemp, gettempdir
+
+    global temp_testdir
+    temp_testdir = mkdtemp(suffix='.test', dir='/var/tmp/')
+    testdirs_zip = 'test_dirs.zip'
+    testdirs_src = join('.',testdirs_zip)
+    testdirs_dest = join(temp_testdir,testdirs_zip)
+    #try:
+    #    copy2(testdirs_src, testdirs_dest)
+    #except OSError as why:
+    #    print("Error copying testdirs.zip file: [{}]".format(str(why)))
+    #    raise
+    from os import system
+    system('unzip {} -d {}'.format(testdirs_src, temp_testdir))
 
 def setUpModule():
     print("setup module")
+    setup_testdirs()
     # remove the temp_brstores.json if it exists (here and teardown)
     # should I remember and reset the default store? Probably...
     from os.path import isfile
@@ -72,7 +166,19 @@ def setUpModule():
 
 def tearDownModule():
     print("teardown module")
-    pass
+    global temp_testdir
+
+    pushd(parent(temp_testdir))
+    from os import getcwd, system
+
+    # TODO: make this pure python, no rm -rf...
+    
+    print("{}".format(getcwd()))
+
+    system("echo rm -rf {}".format(temp_testdir))
+
+    popd()
+    print("{}".format(getcwd()))
 
 
 class TestBrStoresClass(TestCase):
