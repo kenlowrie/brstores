@@ -1,0 +1,80 @@
+test1
+{
+    "def": {
+        "dest": "test_dirs/test1/dest", 
+        "flags": "", 
+        "src": "test_dirs/test1/src"
+    }
+}
+
+brstores: Updating new variant [def] to store [test1]
+brstores: Dumping the updated store dictionary to json disk file...
+test1
+{
+    "def": {
+        "dest": "test_dirs/test1/destNEW", 
+        "flags": "", 
+        "src": "test_dirs/test1/src"
+    }
+}
+
+test2
+{
+    "variant1": {
+        "dest": "dest/path/3", 
+        "flags": " --temp-dir=/temp/dir -h --ipv6 -0 --timeout=25", 
+        "src": "src/path/1"
+    }
+}
+
+brstores: Updating new variant [variant1] to store [test2]
+brstores: Dumping the updated store dictionary to json disk file...
+test2
+{
+    "variant1": {
+        "dest": "dest/path/3", 
+        "flags": " --temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+        "src": "src/path/1/NEW"
+    }
+}
+
+Expected SyncError Exception: 3:store [test99] does not exist, cannot update.
+Expected SyncError Exception: 3:store [test2] variant [variant99] does not exist, cannot update.
+{
+    "test1": {
+        "def": {
+            "dest": "test_dirs/test1/destNEW", 
+            "flags": "", 
+            "src": "test_dirs/test1/src"
+        }
+    }, 
+    "test2": {
+        "variant1": {
+            "dest": "dest/path/3", 
+            "flags": " --temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+            "src": "src/path/1/NEW"
+        }
+    }, 
+    "test3": {
+        "variant3a": {
+            "dest": "test_dirs/test3a/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3a/src"
+        }, 
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3b/src"
+        }, 
+        "variant3c": {
+            "dest": "test_dirs/test3c/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3c/src"
+        }, 
+        "variant3d": {
+            "dest": "test_dirs/test3d/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3d/src"
+        }
+    }
+}
