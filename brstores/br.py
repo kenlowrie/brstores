@@ -14,8 +14,7 @@ logging.basicConfig(format='%(module)s:%(levelname)s:%(message)s')
 
 """
 TODO:
-    Make pylib a site package, and put it in GitHub, and install as site package.
-    Implement the unittests for it
+    Write the unittests
     Write the docstrings
     Package this app, and rely on the pylib package. Once that works, apply this
         to the avscript app.
@@ -204,7 +203,7 @@ class BrSync(object):
     def sdjs(self):
         logging.debug("sdjs:{}".format(self.args))
         try:
-            return BrStores().saveDefaultStore(self.args.jsonfile)
+            return BrStores().saveDefaultJSONStore(self.args.jsonfile)
         except SyncError as se:
             return self._se_exception(se)
         
