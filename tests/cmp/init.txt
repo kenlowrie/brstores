@@ -1,4 +1,21 @@
+
+Current defaults set in /Users/ken/Dropbox/shared/src/script/brstores/brstores/brstores.default
+
+	defaultstore: /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json
+
+Current JSON store contents (should be empty):
+{}
 brstores: created new JSON data store file: [./test_make_new_store.json]
+Newly created JSON store contents:
+{
+    "storeName": {
+        "variantName": {
+            "dest": "~/Desktop/destPath", 
+            "flags": "", 
+            "src": "~/Desktop/srcPath"
+        }
+    }
+}
 
 Current defaults set in /Users/ken/Dropbox/shared/src/script/brstores/brstores/brstores.default
 
@@ -6,9 +23,21 @@ Current defaults set in /Users/ken/Dropbox/shared/src/script/brstores/brstores/b
 
 brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_make_new_store_make_default.json
 brstores: created new JSON data store file: [./test_make_new_store_make_default.json]
+Newly created default JSON store contents:
+{
+    "storeName": {
+        "variantName": {
+            "dest": "~/Desktop/destPath", 
+            "flags": "", 
+            "src": "~/Desktop/srcPath"
+        }
+    }
+}
 
 Current defaults set in /Users/ken/Dropbox/shared/src/script/brstores/brstores/brstores.default
 
 	defaultstore: /Users/ken/Dropbox/shared/src/script/brstores/tests/test_make_new_store_make_default.json
 
 brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json
+Previous JSON store contents (should still be empty):
+{}

@@ -1,5 +1,54 @@
-{}
+{
+    "test1": {
+        "def": {
+            "dest": "test_dirs/test1/destNEW", 
+            "flags": "", 
+            "src": "test_dirs/test1/src"
+        }
+    }, 
+    "test2": {
+        "variant1": {
+            "dest": "dest/path/3", 
+            "flags": " --temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+            "src": "src/path/1/NEW"
+        }
+    }, 
+    "test3": {
+        "variant3a": {
+            "dest": "test_dirs/test3a/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3a/src"
+        }, 
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3b/src"
+        }, 
+        "variant3c": {
+            "dest": "test_dirs/test3c/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3c/src"
+        }, 
+        "variant3d": {
+            "dest": "test_dirs/test3d/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3d/src"
+        }
+    }
+}
     Data store  Variant Name  
 ----------------------------------------
+         test1: def           
+         test2: variant1      
+         test3: variant3a     
+         test3: variant3b     
+         test3: variant3c     
+         test3: variant3d     
     Data store    Variant Name  <Src>, <Dest>, [Flags]
 -------------------------------------------------------------------------------
+         test1:            def <test_dirs/test1/src>, <test_dirs/test1/destNEW>, []
+         test2:       variant1 <src/path/1/NEW>, <dest/path/3>, [ --temp-dir=/temp/dir -h --ipv4 -0 --timeout=25]
+         test3:      variant3a <test_dirs/test3a/src>, <test_dirs/test3a/dest>, []
+         test3:      variant3b <test_dirs/test3b/src>, <test_dirs/test3b/dest>, []
+         test3:      variant3c <test_dirs/test3c/src>, <test_dirs/test3c/dest>, []
+         test3:      variant3d <test_dirs/test3d/src>, <test_dirs/test3d/dest>, []

@@ -28,6 +28,36 @@ operations:
     dump                dump the stores JSON file or the named store
 
 Get help on operations by using brstores operation -h
+usage: br [-h] [-d] [-pv]
+          {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump} ...
+
+Sync Directories aka poor man's backup and restore
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d, --debug           enable debug logging
+  -pv, --pyVersionStr   show version of Python interpreter.
+
+operations:
+  valid operations
+
+  {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump}
+    i                   initialize a JSON store repository. synonyms: init
+    defaults            display defaults
+    sdjs                set def JSON store repo. synonyms: setDefaultJSONstore
+    b                   perform a backup. synonyms: bu, backup
+    r                   perform a restore. synonyms: re, restore
+    as                  add a new store. synonyms: addStore
+    us                  update existing store. synonyms: updateStore
+    rens                rename existing store. synonyms: renameStore
+    renv                rename existing variant. synonyms: renameVariant
+    setd                set default store variant. synonyms: setDefault
+    rems                remove existing store. synonyms: removeStore
+    remv                remove existing variant. synonyms: removeVariant
+    remd                remove default store variant. synonyms: removeDefault
+    dump                dump the stores JSON file or the named store
+
+Get help on operations by using brstores operation -h
 ----------------------------------------
 i -h
 ----------------------------------------
@@ -40,9 +70,77 @@ optional arguments:
   -h, --help          show this help message and exit
   -md, --makedefault  make this the default json store repository
 ----------------------------------------
+init --help
+----------------------------------------
+usage: br init [-h] [-md] jsonfile
+
+positional arguments:
+  jsonfile            name of json store repository
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -md, --makedefault  make this the default json store repository
+----------------------------------------
+defaults --help
+----------------------------------------
+usage: br defaults [-h]
+
+optional arguments:
+  -h, --help  show this help message and exit
+----------------------------------------
+sdjs --help
+----------------------------------------
+usage: br sdjs [-h] [-md] jsonfile
+
+positional arguments:
+  jsonfile            name of json store repository
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -md, --makedefault  make this the default json store repository
+----------------------------------------
+setDefaultJSONstore -h
+----------------------------------------
+usage: br setDefaultJSONstore [-h] [-md] jsonfile
+
+positional arguments:
+  jsonfile            name of json store repository
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -md, --makedefault  make this the default json store repository
+----------------------------------------
 b -h
 ----------------------------------------
 usage: br b [-h] [-j JSONFILE] [-v VARIANT] store
+
+positional arguments:
+  store                 name of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+  -v VARIANT, --variant VARIANT
+                        data store variant name
+----------------------------------------
+bu --help
+----------------------------------------
+usage: br bu [-h] [-j JSONFILE] [-v VARIANT] store
+
+positional arguments:
+  store                 name of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+  -v VARIANT, --variant VARIANT
+                        data store variant name
+----------------------------------------
+backup -h
+----------------------------------------
+usage: br backup [-h] [-j JSONFILE] [-v VARIANT] store
 
 positional arguments:
   store                 name of data store
@@ -68,6 +166,53 @@ optional arguments:
   -v VARIANT, --variant VARIANT
                         data store variant name
 ----------------------------------------
+re --help
+----------------------------------------
+usage: br re [-h] [-j JSONFILE] [-v VARIANT] store
+
+positional arguments:
+  store                 name of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+  -v VARIANT, --variant VARIANT
+                        data store variant name
+----------------------------------------
+restore --help
+----------------------------------------
+usage: br restore [-h] [-j JSONFILE] [-v VARIANT] store
+
+positional arguments:
+  store                 name of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+  -v VARIANT, --variant VARIANT
+                        data store variant name
+----------------------------------------
+addStore --help
+----------------------------------------
+usage: br addStore [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+                   store srcPath destPath
+
+positional arguments:
+  store                 name of data store
+  srcPath               source path of data store
+  destPath              destination path of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+  -v VARIANT, --variant VARIANT
+                        data store variant name
+  -f [FLAGS], --flags [FLAGS]
+                        the rsync flags
+----------------------------------------
 as -h
 ----------------------------------------
 usage: br as [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
@@ -86,6 +231,198 @@ optional arguments:
                         data store variant name
   -f [FLAGS], --flags [FLAGS]
                         the rsync flags
+----------------------------------------
+updateStore -h
+----------------------------------------
+usage: br updateStore [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+                      store srcPath destPath
+
+positional arguments:
+  store                 name of data store
+  srcPath               source path of data store
+  destPath              destination path of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+  -v VARIANT, --variant VARIANT
+                        data store variant name
+  -f [FLAGS], --flags [FLAGS]
+                        the rsync flags
+----------------------------------------
+us --help
+----------------------------------------
+usage: br us [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+             store srcPath destPath
+
+positional arguments:
+  store                 name of data store
+  srcPath               source path of data store
+  destPath              destination path of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+  -v VARIANT, --variant VARIANT
+                        data store variant name
+  -f [FLAGS], --flags [FLAGS]
+                        the rsync flags
+----------------------------------------
+rens -h
+----------------------------------------
+usage: br rens [-h] [-j JSONFILE] curStoreName newStoreName
+
+positional arguments:
+  curStoreName          current store name
+  newStoreName          new store name
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+renameStore --help
+----------------------------------------
+usage: br renameStore [-h] [-j JSONFILE] curStoreName newStoreName
+
+positional arguments:
+  curStoreName          current store name
+  newStoreName          new store name
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+renv --help
+----------------------------------------
+usage: br renv [-h] [-j JSONFILE] store curVariantName newVariantName
+
+positional arguments:
+  store                 name of data store
+  curVariantName        current variant name
+  newVariantName        new variant name
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+renameVariant -h
+----------------------------------------
+usage: br renameVariant [-h] [-j JSONFILE] store curVariantName newVariantName
+
+positional arguments:
+  store                 name of data store
+  curVariantName        current variant name
+  newVariantName        new variant name
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+setd -h
+----------------------------------------
+usage: br setd [-h] [-j JSONFILE] store variant
+
+positional arguments:
+  store                 name of data store
+  variant               name of variant
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+setDefault --help
+----------------------------------------
+usage: br setDefault [-h] [-j JSONFILE] store variant
+
+positional arguments:
+  store                 name of data store
+  variant               name of variant
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+rems --help
+----------------------------------------
+usage: br rems [-h] [-j JSONFILE] store
+
+positional arguments:
+  store                 name of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+removeStore -h
+----------------------------------------
+usage: br removeStore [-h] [-j JSONFILE] store
+
+positional arguments:
+  store                 name of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+remv -h
+----------------------------------------
+usage: br remv [-h] [-j JSONFILE] store variant
+
+positional arguments:
+  store                 name of data store
+  variant               name of variant
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+removeVariant --help
+----------------------------------------
+usage: br removeVariant [-h] [-j JSONFILE] store variant
+
+positional arguments:
+  store                 name of data store
+  variant               name of variant
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+remd --help
+----------------------------------------
+usage: br remd [-h] [-j JSONFILE] store
+
+positional arguments:
+  store                 name of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+----------------------------------------
+removeDefault -h
+----------------------------------------
+usage: br removeDefault [-h] [-j JSONFILE] store
+
+positional arguments:
+  store                 name of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
 ----------------------------------------
 dump -h
 ----------------------------------------
