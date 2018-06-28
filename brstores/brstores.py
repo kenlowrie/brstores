@@ -345,7 +345,8 @@ class BrStores(object):
 
     def dump_short_summary(self, store):
         for variant in sorted(self.brstores[store]):
-            message("{:>14}: {:<14}".format(store, variant), False)
+            if variant != BrStores.DEF_VARIANT_KEY:
+                message("{:>14}: {:<14}".format(store, variant), False)
 
     def dump_long_summary_header(self):
         message("{:>14}  {:>14}  {}".format("Data store", "Variant Name", "<Src>, <Dest>, [Flags]"), False)
@@ -353,6 +354,8 @@ class BrStores(object):
 
     def dump_long_summary(self, store):
         for variant in sorted(self.brstores[store]):
+            if variant == BrStores.DEF_VARIANT_KEY:
+                continue
             src = self.brstores[store][variant]['src']
             dest = self.brstores[store][variant]['dest']
             flags = self.brstores[store][variant]['flags']
