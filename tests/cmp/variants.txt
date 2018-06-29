@@ -10,7 +10,7 @@ test variant logic
     "test2": {
         "variant1": {
             "dest": "dest/path/3", 
-            "flags": " --temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+            "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
             "src": "src/path/1/NEW"
         }
     }, 
@@ -47,5 +47,165 @@ CMD: setd test3 -v no_switch_for_variant
 usage: br [-h] [-d] [-pv]
           {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump} ...
 br: error: unrecognized arguments: -v
+CMD: renv
+usage: br renv [-h] [-j JSONFILE] store curVariantName newVariantName
+br renv: error: too few arguments
+CMD: renv test3
+usage: br renv [-h] [-j JSONFILE] store curVariantName newVariantName
+br renv: error: too few arguments
+CMD: renv test3 missing_arguments
+usage: br renv [-h] [-j JSONFILE] store curVariantName newVariantName
+br renv: error: too few arguments
+CMD: remv
+usage: br remv [-h] [-j JSONFILE] store variant
+br remv: error: too few arguments
+CMD: remv test3
+usage: br remv [-h] [-j JSONFILE] store variant
+br remv: error: too few arguments
 Expected SyncError Exception: 20:Store [test_not_a_store] doesn't exist.
 Expected SyncError Exception: 20:Variant [invalid_variant] not found in store [test3]
+Expected SyncError Exception: 16:Store [invalid_store_name_test3] doesn't exist.
+Expected SyncError Exception: 16:Variant [invalid_variant_name] not found in store [test3]
+Expected SyncError Exception: 18:Store [invalid_store_name] doesn't exist.
+Expected SyncError Exception: 18:Variant [invalid_variant_name] not found in store [test3]
+brstores: Store Variant [variant3d] is now the default.
+test3
+{
+    "__default__": "variant3d", 
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3a/src"
+    }, 
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3b/src"
+    }, 
+    "variant3c": {
+        "dest": "test_dirs/test3c/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3c/src"
+    }, 
+    "variant3d": {
+        "dest": "test_dirs/test3d/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3d/src"
+    }
+}
+
+brstores: Store Variant [variant3c] is now called [variant3charlie].
+test3
+{
+    "__default__": "variant3d", 
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3a/src"
+    }, 
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3b/src"
+    }, 
+    "variant3charlie": {
+        "dest": "test_dirs/test3c/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3c/src"
+    }, 
+    "variant3d": {
+        "dest": "test_dirs/test3d/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3d/src"
+    }
+}
+
+brstores: Store Variant [variant3d] is now called [variant3delta].
+test3
+{
+    "__default__": "variant3delta", 
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3a/src"
+    }, 
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3b/src"
+    }, 
+    "variant3charlie": {
+        "dest": "test_dirs/test3c/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3c/src"
+    }, 
+    "variant3delta": {
+        "dest": "test_dirs/test3d/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3d/src"
+    }
+}
+
+brstores: Store Variant [variant3delta] has been removed.
+test3
+{
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3a/src"
+    }, 
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3b/src"
+    }, 
+    "variant3charlie": {
+        "dest": "test_dirs/test3c/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3c/src"
+    }
+}
+
+brstores: Store Variant [variant3a] has been removed.
+test3
+{
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3b/src"
+    }, 
+    "variant3charlie": {
+        "dest": "test_dirs/test3c/dest", 
+        "flags": "", 
+        "src": "test_dirs/test3c/src"
+    }
+}
+
+{
+    "test1": {
+        "def": {
+            "dest": "test_dirs/test1/destNEW", 
+            "flags": "", 
+            "src": "test_dirs/test1/src"
+        }
+    }, 
+    "test2": {
+        "variant1": {
+            "dest": "dest/path/3", 
+            "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+            "src": "src/path/1/NEW"
+        }
+    }, 
+    "test3": {
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3b/src"
+        }, 
+        "variant3charlie": {
+            "dest": "test_dirs/test3c/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3c/src"
+        }
+    }
+}
