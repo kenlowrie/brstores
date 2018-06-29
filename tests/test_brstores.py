@@ -18,13 +18,10 @@ test5 - extra files in both
 
 Test design:
 
-00. Call each one with no parms, missing parms, invalid parms, switches
 10. Rename store
 13. Remove store
 16. Create a second brstores.json
 17. Test everything using the -j override
-18. Test debug flag
-19. Test pv flag
 20. Add all the stores for the backup/restore operations
 20a. Unzip the test_dirs.zip into the temp/backup and temp/restore areas
 20b. Unzip the test_dirs_backup.zip into temp/results/backup
@@ -62,60 +59,7 @@ from unittest import TestCase, TestLoader, TextTestRunner
 
 from brstores import br
 from brstores.brstores import SyncError
-
-# TODO: This belongs in pylib
-_pushdstack = []
-
-# TODO: this should throw exceptions if it fails.
-
-def parent(pathspec):
-    from os.path import split
-    path, filename = split(pathspec)
-
-    return path
-
-def pushd(dir=None):
-    """Set current working directory to 'dir' and save where we are now on a stack.
-    Later you can use popd to restore the original directory"""
-    global _pushdstack
-    from os import getcwd, chdir
-
-    if dir == None:
-        dir = getcwd()
-
-    if not isinstance(dir,type('')):
-        return False
-
-    _pushdstack.append(getcwd())
-
-    try:
-        chdir(dir)
-        err = 0
-    except OSError:
-        err = 1
-
-    if err == 1:
-        _pushdstack.pop()
-        return False
-
-    return True
-
-def popd():
-    """Set the current working directory back to what it was when pushd was called"""
-    global _pushdstack
-    from os import chdir
-
-    if len(_pushdstack) == 0:
-        return False
-
-    try:
-        chdir(_pushdstack.pop())
-        err = 0
-    except OSError:
-        err = 1
-
-    return err == 0
-
+from pylib import parent, pushd, popd
 
 DEFAULT_STORE = './test_brstores.json'
 temp_testdir = ''
@@ -208,24 +152,41 @@ class TestBrStoresClass(TestCase):
             self.assertEqual(self.capturedOutput.getvalue(), data)
 
     def test_0_init(self):
-        from os import unlink
-        from os.path import isfile
-        self.brs.run('defaults'.split())
+        print("test init JSON data store logic")
+        run = lambda cmd: self.brs.run(cmd.split())
+
+        # Invalid / Missing parameter tests
+        for sub_command in ['i', 'init']:
+            print("CMD: {}".format(sub_command))
+            with self.assertRaises(SystemExit):
+                run(sub_command)
+
+        run('defaults')
         print("Current JSON store contents (should be empty):")
-        self.brs.run(['dump'])      # dump current store, should be empty
+        run('dump')      # dump current store, should be empty
         new_store_1 = './test_make_new_store.json'
         new_store_2 = './test_make_new_store_make_default.json'
-        self.brs.run('i {}'.format(new_store_1).split())
+        run('i {}'.format(new_store_1))
         print("Newly created JSON store contents:")
-        self.brs.run(['dump', '-j', '{}'.format(new_store_1)])
-        self.brs.run('defaults'.split())
-        self.brs.run('init {} -md'.format(new_store_2).split())
+        run('dump -j {}'.format(new_store_1))
+        run('defaults')
+        run('init {} -md'.format(new_store_2))
         print("Newly created default JSON store contents:")
-        self.brs.run(['dump'])
-        self.brs.run('defaults'.split())
-        self.brs.run('sdjs {}'.format(DEFAULT_STORE).split())
+        run('dump')
+        run('defaults')
+        run('sdjs {}'.format(DEFAULT_STORE))
         print("Previous JSON store contents (should still be empty):")
-        self.brs.run(['dump'])
+        run('dump')
+
+        # Things that will raise exceptions from BrStores()
+        for sub_command in ['i {}'.format(new_store_1)]:
+            try:
+                run(sub_command)
+            except SyncError as se:
+                print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        from os import unlink
+        from os.path import isfile
         unlink(new_store_1)
         unlink(new_store_2)
         self.assertEqual(isfile(new_store_1),False)
@@ -233,11 +194,13 @@ class TestBrStoresClass(TestCase):
         self.process('init')
         
     def test_10_help(self):
+        print("test help logic")
+        run = lambda cmd: self.brs.run(cmd.split())
         with self.assertRaises(SystemExit):
-            self.brs.run(['-h'])
+            run('-h')
 
         with self.assertRaises(SystemExit):
-            self.brs.run(['--help'])
+            run('--help')
 
         help_cmds = ['i -h', 'init --help', 'defaults --help', 
                      'sdjs --help', 'setDefaultJSONstore -h',
@@ -256,91 +219,257 @@ class TestBrStoresClass(TestCase):
         for help in help_cmds:
             print('{}\n{}\n{}'.format('-'*40, help, '-'*40))
             with self.assertRaises(SystemExit):
-                self.brs.run(help.split())
+                run(help)
         self.process('help')
 
     def test_20_addstore(self):
-        self.brs.run('as test1 test_dirs/test1/src test_dirs/test1/dest'.split())
-        self.brs.run('dump -s test1'.split())
+        print("test add store logic")
+        run = lambda cmd: self.brs.run(cmd.split())
+
+        run('dump')
+        # Invalid / Missing parameter tests
+        for sub_command in ['as', 'addStore',
+                            'as missing_src_and_dest',
+                            'as store missing_dest', 
+                           ]:
+            print("CMD: {}".format(sub_command))
+            with self.assertRaises(SystemExit):
+                run(sub_command)
+
+        run('as test1 test_dirs/test1/src test_dirs/test1/dest')
+        run('dump -s test1')
         self.brs.run(['addStore', 'test2', 'src/path/1', 
                       '-f', ' --temp-dir=/temp/dir -h --ipv6 -0 --timeout=25',
-                      '-v', 'variant1', 'dest/path/3',
-                     ])
-        self.brs.run('dump -s test2'.split())
-        self.brs.run('as test3 test_dirs/test3a/src test_dirs/test3a/dest -v variant3a'.split())
-        self.brs.run('dump -s test3'.split())
-        self.brs.run('as -v variant3b test3 test_dirs/test3b/src test_dirs/test3b/dest'.split())
-        self.brs.run('dump -s test3'.split())
-        self.brs.run('as test3 -v variant3c test_dirs/test3c/src test_dirs/test3c/dest'.split())
-        self.brs.run('dump -s test3'.split())
-        self.brs.run('as test3 test_dirs/test3d/src -v variant3d test_dirs/test3d/dest'.split())
-        self.brs.run('dump -s test3'.split())
+                      '-v', 'variant1', 
+                      'dest/path/3',
+        ])
+        run('dump -s test2')
+        run('as test3 test_dirs/test3a/src test_dirs/test3a/dest -v variant3a')
+        run('dump -s test3')
+        run('as -v variant3b test3 test_dirs/test3b/src test_dirs/test3b/dest')
+        run('dump -s test3')
+        run('as test3 -v variant3c test_dirs/test3c/src test_dirs/test3c/dest')
+        run('dump -s test3')
+        run('as test3 test_dirs/test3d/src -v variant3d test_dirs/test3d/dest')
+        run('dump -s test3')
+
+        # Things that will raise exceptions from BrStores()
+        for sub_command in ['as test1 src/willfail dest/betterfail', 
+                            'as test3 src/willfail dest/betterfail -v variant3b',
+                           ]:
+            try:
+                run(sub_command)
+            except SyncError as se:
+                print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        run('dump')
 
         self.process('addstore')
 
     def test_21_updatestore(self):
-        self.brs.run('dump -s test1'.split())
-        self.brs.run('us test1 test_dirs/test1/src test_dirs/test1/destNEW'.split())
-        self.brs.run('dump -s test1'.split())
-        self.brs.run('dump -s test2'.split())
+        print("test update store logic")
+        run = lambda cmd: self.brs.run(cmd.split())
+
+        # Invalid / Missing parameter tests
+        for sub_command in ['us', 'updateStore',
+                            'us just_store',
+                            'us just_store and_src_path', 
+                           ]:
+            print("CMD: {}".format(sub_command))
+            with self.assertRaises(SystemExit):
+                run(sub_command)
+
+        # Things that will raise exceptions from BrStores()
+        for sub_command in ['us test99 src/willfail dest/betterfail', 
+                            'us test2 src/willfail dest/betterfail -v variant99',
+                           ]:
+            try:
+                run(sub_command)
+            except SyncError as se:
+                print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        run('dump -s test1')
+        run('us test1 test_dirs/test1/src test_dirs/test1/destNEW')
+        run('dump -s test1')
+        run('dump -s test2')
         self.brs.run(['updateStore', 'test2', 'src/path/1/NEW', 
                       '-f', ' --temp-dir=/temp/dir -h --ipv4 -0 --timeout=25',
-                      '-v', 'variant1', 'dest/path/3',
-                     ])
-        self.brs.run('dump -s test2'.split())
+                      '-v', 'variant1', 
+                      'dest/path/3',
+        ])
+        run('dump -s test2')
 
-        try:
-            self.brs.run('us test99 src/willfail dest/betterfail'.split())
-        except SyncError as se:
-            print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
-
-        try:
-            self.brs.run('us test2 src/willfail dest/betterfail -v variant99'.split())
-        except SyncError as se:
-            print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
-
-        self.brs.run(['dump'])
+        run('dump')
 
         self.process('updatestore')
 
+    def test_22_stores(self):
+        print("test miscellaneous stores sub commands")
+        run = lambda cmd: self.brs.run(cmd.split())
+
+        # Invalid / Missing parameter tests
+        for sub_command in []:
+            print("CMD: {}".format(sub_command))
+            with self.assertRaises(SystemExit):
+                run(sub_command)
+
+        # Things that will raise exceptions from BrStores()
+        for sub_command in []:
+            try:
+                run(sub_command)
+            except SyncError as se:
+                print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        # And here's the stuff that should work.
+        
+        self.process('stores')
+
     def test_31_variants(self):
         print("test variant logic")
-        self.brs.run(['dump'])
+        run = lambda cmd: self.brs.run(cmd.split())
+        run('dump')
 
         # Invalid / Missing parameter tests
         for sub_command in ['setd', 
                             'setd test3',
                             'setd test3 -v no_switch_for_variant', 
+                            'renv',
+                            'renv test3',
+                            'renv test3 missing_arguments',
+                            'remv',
+                            'remv test3',
                            ]:
             print("CMD: {}".format(sub_command))
             with self.assertRaises(SystemExit):
-                self.brs.run(sub_command.split())
+                run(sub_command)
 
         # Things that will raise exceptions from BrStores()
+        # 7b. Try to make non-existant variant default
         for sub_command in ['setd test_not_a_store variant3d', 
                             'setd test3 invalid_variant',
+                            'renv invalid_store_name_test3 variant3a will_not_matter',
+                            'renv test3 invalid_variant_name will_not_matter',
+                            'remv invalid_store_name variant3a',
+                            'remv test3 invalid_variant_name',
                            ]:
             try:
-                self.brs.run(sub_command.split())
+                run(sub_command)
             except SyncError as se:
                 print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
 
+        
         # 7a. Make default variant
-        # 7b. Try to make non-existant variant default
+        run('setd test3 variant3d')
+        run('dump -s test3')
         # 9a. Rename variant
+        run('renv test3 variant3c variant3charlie')
+        run('dump -s test3')
         # 9b. Rename default variant, make sure __default__ is updated
+        run('renv test3 variant3d variant3delta')
+        run('dump -s test3')
         # 9c. Remove default variant, make sure __default__ is removed
+        run('remv test3 variant3delta')
+        run('dump -s test3')
         # 9d. Remove variant
+        run('remv test3 variant3a')
+        run('dump -s test3')
+        
+        run('dump')
+
         self.process('variants')
+
+
+    def test_json_data_store_optional(self):
+        print("test json data store optional")
+        run = lambda cmd: self.brs.run(cmd.split())
+
+        # Invalid / Missing parameter tests
+        for sub_command in []:
+            print("CMD: {}".format(sub_command))
+            with self.assertRaises(SystemExit):
+                run(sub_command)
+
+        # Things that will raise exceptions from BrStores()
+        for sub_command in []:
+            try:
+                run(sub_command)
+            except SyncError as se:
+                print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        # And here's the stuff that should work.
+        
+        self.process('json')
+
+    def test_pv(self):
+        print("test the pv flags")
+        run = lambda cmd: self.brs.run(cmd.split())
+
+        def get_io(command):
+            # Create StringIO object
+            tempIO = StringIO.StringIO()
+            # Save current stdout and stderr
+            curStdout, curStderr = (sys.stdout, sys.stderr)
+            # Redirect to temp IO buffer
+            sys.stdout, sys.stderr = (tempIO, tempIO)
+            # Run the command
+            run(command)
+            # Put back stdout, stderr
+            sys.stdout, sys.stderr = (curStdout, curStderr)
+            
+            return tempIO.getvalue()
+        
+        pv_io = get_io('-pv defaults')
+
+        from re import match
+        py_ver = match(r'^(Python Interpreter Version\:)\s+(\d+\.\d+\.\d+)', pv_io)
+        self.assertIsNotNone(py_ver)
+        self.assertEqual(len(py_ver.groups()), 2)
+        self.assertEqual('Python Interpreter Version:', py_ver.group(1))
+        print("Python Interpreter Version was returned by -pv flag. OK.")
+        
+        # Invalid / Missing parameter tests
+        for sub_command in []:
+            print("CMD: {}".format(sub_command))
+            with self.assertRaises(SystemExit):
+                run(sub_command)
+
+        # Things that will raise exceptions from BrStores()
+        for sub_command in []:
+            try:
+                run(sub_command)
+            except SyncError as se:
+                print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        # And here's the stuff that should work.
+        
+        self.process('pv')
 
     def test_skeleton(self):
         print("this is a skeleton test")
+        run = lambda cmd: self.brs.run(cmd.split())
+
+        # Invalid / Missing parameter tests
+        for sub_command in []:
+            print("CMD: {}".format(sub_command))
+            with self.assertRaises(SystemExit):
+                run(sub_command)
+
+        # Things that will raise exceptions from BrStores()
+        for sub_command in []:
+            try:
+                run(sub_command)
+            except SyncError as se:
+                print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        # And here's the stuff that should work.
+        
         self.process('skeleton')
 
     def test_zdump(self):
-        self.brs.run('dump'.split())
-        self.brs.run('dump -ss'.split())
-        self.brs.run('dump -ls'.split())
+        run = lambda cmd: self.brs.run(cmd.split())
+        run('dump')
+        run('dump -ss')
+        run('dump -ls')
         self.process('dump')
 
 
