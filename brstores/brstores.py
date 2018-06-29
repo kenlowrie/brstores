@@ -265,22 +265,26 @@ class BrStores(object):
         raise SyncError(15,"Store [{}] doesn't exist.".format(curStoreName))
         
     def renameVariant(self,store,curVariant,newVariant):        
-        if( store in self.brstores ):
-            if( curVariant in self.brstores[store] ):
-                if( newVariant in self.brstores[store] ):
+        if store in self.brstores:
+            if curVariant in self.brstores[store]:
+                if newVariant in self.brstores[store]:
                     raise SyncError(16,"Variant [{}] already exists in store [{}].".format(newVariant, store))
-                    
+
+                if BrStores.DEF_VARIANT_KEY in self.brstores[store]:
+                    if curVariant == self.brstores[store][BrStores.DEF_VARIANT_KEY]:
+                        self.brstores[store][BrStores.DEF_VARIANT_KEY] = newVariant
+
                 self.brstores[store][newVariant] = self.brstores[store].pop(curVariant)
-                
+
                 self._saveStores()
                 message("Store Variant [{}] is now called [{}].".format(curVariant, newVariant))
-                
+
                 return 0
-                
+
             raise SyncError(16,"Variant [{}] not found in store [{}]".format(curVariant, store))
-        
-        raise SyncError(16,"Store [{}] doesn't exist.".format(curStoreName))
-        
+
+        raise SyncError(16,"Store [{}] doesn't exist.".format(store))
+
     def removeStore(self,store):
         if( store in self.brstores ):
             self.brstores.pop(store)
@@ -295,15 +299,19 @@ class BrStores(object):
     def removeVariant(self,store,variant):        
         if( store in self.brstores ):
             if( variant in self.brstores[store] ):
+                if BrStores.DEF_VARIANT_KEY in self.brstores[store]:
+                    if variant == self.brstores[store][BrStores.DEF_VARIANT_KEY]:
+                        self.brstores[store].pop(BrStores.DEF_VARIANT_KEY)
+
                 self.brstores[store].pop(variant)
-                
+
                 self._saveStores()
                 message("Store Variant [{}] has been removed.".format(variant))
-                
+
                 return 0
-                
+
             raise SyncError(18,"Variant [{}] not found in store [{}]".format(variant, store))
-        
+
         raise SyncError(18,"Store [{}] doesn't exist.".format(store))
 
     def getDefault(self,store):
