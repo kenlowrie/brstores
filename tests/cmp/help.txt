@@ -1,3 +1,4 @@
+test help logic
 usage: br [-h] [-d] [-pv]
           {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump} ...
 
