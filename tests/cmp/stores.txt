@@ -1,0 +1,1 @@
+test miscellaneous stores sub commands
