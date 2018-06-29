@@ -1,3 +1,21 @@
+test add store logic
+{}
+CMD: as
+usage: br as [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+             store srcPath destPath
+br as: error: too few arguments
+CMD: addStore
+usage: br addStore [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+                   store srcPath destPath
+br addStore: error: too few arguments
+CMD: as missing_src_and_dest
+usage: br as [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+             store srcPath destPath
+br as: error: too few arguments
+CMD: as store missing_dest
+usage: br as [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+             store srcPath destPath
+br as: error: too few arguments
 brstores: Adding new store [test1]
 brstores: Dumping the updated store dictionary to json disk file...
 test1
@@ -15,7 +33,7 @@ test2
 {
     "variant1": {
         "dest": "dest/path/3", 
-        "flags": " --temp-dir=/temp/dir -h --ipv6 -0 --timeout=25", 
+        "flags": "--temp-dir=/temp/dir -h --ipv6 -0 --timeout=25", 
         "src": "src/path/1"
     }
 }
@@ -94,3 +112,43 @@ test3
     }
 }
 
+Expected SyncError Exception: 3:store [test1] variant [def] already exists
+Expected SyncError Exception: 3:store [test3] variant [variant3b] already exists
+{
+    "test1": {
+        "def": {
+            "dest": "test_dirs/test1/dest", 
+            "flags": "", 
+            "src": "test_dirs/test1/src"
+        }
+    }, 
+    "test2": {
+        "variant1": {
+            "dest": "dest/path/3", 
+            "flags": "--temp-dir=/temp/dir -h --ipv6 -0 --timeout=25", 
+            "src": "src/path/1"
+        }
+    }, 
+    "test3": {
+        "variant3a": {
+            "dest": "test_dirs/test3a/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3a/src"
+        }, 
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3b/src"
+        }, 
+        "variant3c": {
+            "dest": "test_dirs/test3c/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3c/src"
+        }, 
+        "variant3d": {
+            "dest": "test_dirs/test3d/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3d/src"
+        }
+    }
+}
