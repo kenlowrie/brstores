@@ -1,3 +1,22 @@
+test update store logic
+CMD: us
+usage: br us [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+             store srcPath destPath
+br us: error: too few arguments
+CMD: updateStore
+usage: br updateStore [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+                      store srcPath destPath
+br updateStore: error: too few arguments
+CMD: us just_store
+usage: br us [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+             store srcPath destPath
+br us: error: too few arguments
+CMD: us just_store and_src_path
+usage: br us [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
+             store srcPath destPath
+br us: error: too few arguments
+Expected SyncError Exception: 3:store [test99] does not exist, cannot update.
+Expected SyncError Exception: 3:store [test2] variant [variant99] does not exist, cannot update.
 test1
 {
     "def": {
@@ -22,7 +41,7 @@ test2
 {
     "variant1": {
         "dest": "dest/path/3", 
-        "flags": " --temp-dir=/temp/dir -h --ipv6 -0 --timeout=25", 
+        "flags": "--temp-dir=/temp/dir -h --ipv6 -0 --timeout=25", 
         "src": "src/path/1"
     }
 }
@@ -33,13 +52,11 @@ test2
 {
     "variant1": {
         "dest": "dest/path/3", 
-        "flags": " --temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+        "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
         "src": "src/path/1/NEW"
     }
 }
 
-Expected SyncError Exception: 3:store [test99] does not exist, cannot update.
-Expected SyncError Exception: 3:store [test2] variant [variant99] does not exist, cannot update.
 {
     "test1": {
         "def": {
@@ -51,7 +68,7 @@ Expected SyncError Exception: 3:store [test2] variant [variant99] does not exist
     "test2": {
         "variant1": {
             "dest": "dest/path/3", 
-            "flags": " --temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+            "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
             "src": "src/path/1/NEW"
         }
     }, 
