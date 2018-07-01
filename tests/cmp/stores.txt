@@ -1,1 +1,117 @@
 test miscellaneous stores sub commands
+------------------------------------------
+rens
+------------------------------------------
+usage: br rens [-h] [-j JSONFILE] curStoreName newStoreName
+br rens: error: too few arguments
+------------------------------------------
+renameStore
+------------------------------------------
+usage: br renameStore [-h] [-j JSONFILE] curStoreName newStoreName
+br renameStore: error: too few arguments
+------------------------------------------
+rems
+------------------------------------------
+usage: br rems [-h] [-j JSONFILE] store
+br rems: error: too few arguments
+------------------------------------------
+removeStore
+------------------------------------------
+usage: br removeStore [-h] [-j JSONFILE] store
+br removeStore: error: too few arguments
+------------------------------------------
+rens missing_2nd_store
+------------------------------------------
+usage: br rens [-h] [-j JSONFILE] curStoreName newStoreName
+br rens: error: too few arguments
+------------------------------------------
+rens no_such_store new_name
+------------------------------------------
+Expected SyncError Exception: 15:Store [no_such_store] doesn't exist.
+------------------------------------------
+rems no_such_store
+------------------------------------------
+Expected SyncError Exception: 17:Store [no_such_store] doesn't exist.
+------------------------------------------
+These things should work.
+------------------------------------------
+{
+    "test1": {
+        "def": {
+            "dest": "test_dirs/test1/destNEW", 
+            "flags": "", 
+            "src": "test_dirs/test1/src"
+        }
+    }, 
+    "test2": {
+        "variant1": {
+            "dest": "dest/path/3", 
+            "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+            "src": "src/path/1/NEW"
+        }
+    }, 
+    "test3": {
+        "variant3a": {
+            "dest": "test_dirs/test3a/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3a/src"
+        }, 
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3b/src"
+        }, 
+        "variant3c": {
+            "dest": "test_dirs/test3c/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3c/src"
+        }, 
+        "variant3d": {
+            "dest": "test_dirs/test3d/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3d/src"
+        }
+    }
+}
+brstores: Store [test2] is now called [test2_new_name].
+test2_new_name
+{
+    "variant1": {
+        "dest": "dest/path/3", 
+        "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+        "src": "src/path/1/NEW"
+    }
+}
+
+brstores: Store [test1] has been removed.
+{
+    "test2_new_name": {
+        "variant1": {
+            "dest": "dest/path/3", 
+            "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
+            "src": "src/path/1/NEW"
+        }
+    }, 
+    "test3": {
+        "variant3a": {
+            "dest": "test_dirs/test3a/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3a/src"
+        }, 
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3b/src"
+        }, 
+        "variant3c": {
+            "dest": "test_dirs/test3c/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3c/src"
+        }, 
+        "variant3d": {
+            "dest": "test_dirs/test3d/dest", 
+            "flags": "", 
+            "src": "test_dirs/test3d/src"
+        }
+    }
+}
