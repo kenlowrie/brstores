@@ -408,13 +408,13 @@ class BrStores(object):
         raise SyncError(31,"Store [{}] doesn't exist.".format(store))
         
     def initialize(self, jsonfile, makedefault):
-        from os.path import isdir, isfile, split
+        from os.path import isdir, isfile, split, join
         
         path,filename = split(jsonfile)
         if path and not isdir(path):
             raise SyncError(41, "Invalid path specified for JSON file [{}]".format(path))
         elif not path:
-            jsonfile = os.path.join(me.whereami(),filename)
+            jsonfile = join(me.whereami(),filename)
 
         if isfile(jsonfile):
             raise SyncError(42, "JSON file [{}] already exists.".format(jsonfile))
