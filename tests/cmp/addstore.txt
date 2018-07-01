@@ -112,7 +112,13 @@ test3
     }
 }
 
+------------------------------------------
+as test1 src/willfail dest/betterfail
+------------------------------------------
 Expected SyncError Exception: 3:store [test1] variant [def] already exists
+------------------------------------------
+as test3 src/willfail dest/betterfail -v variant3b
+------------------------------------------
 Expected SyncError Exception: 3:store [test3] variant [variant3b] already exists
 {
     "test1": {
