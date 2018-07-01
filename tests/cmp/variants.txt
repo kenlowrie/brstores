@@ -1,13 +1,6 @@
 test variant logic
 {
-    "test1": {
-        "def": {
-            "dest": "test_dirs/test1/destNEW", 
-            "flags": "", 
-            "src": "test_dirs/test1/src"
-        }
-    }, 
-    "test2": {
+    "test2_new_name": {
         "variant1": {
             "dest": "dest/path/3", 
             "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
@@ -38,36 +31,81 @@ test variant logic
     }
 }
 CMD: setd
+------------------------------------------
+setd
+------------------------------------------
 usage: br setd [-h] [-j JSONFILE] store variant
 br setd: error: too few arguments
 CMD: setd test3
+------------------------------------------
+setd test3
+------------------------------------------
 usage: br setd [-h] [-j JSONFILE] store variant
 br setd: error: too few arguments
 CMD: setd test3 -v no_switch_for_variant
+------------------------------------------
+setd test3 -v no_switch_for_variant
+------------------------------------------
 usage: br [-h] [-d] [-pv]
           {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump} ...
 br: error: unrecognized arguments: -v
 CMD: renv
+------------------------------------------
+renv
+------------------------------------------
 usage: br renv [-h] [-j JSONFILE] store curVariantName newVariantName
 br renv: error: too few arguments
 CMD: renv test3
+------------------------------------------
+renv test3
+------------------------------------------
 usage: br renv [-h] [-j JSONFILE] store curVariantName newVariantName
 br renv: error: too few arguments
 CMD: renv test3 missing_arguments
+------------------------------------------
+renv test3 missing_arguments
+------------------------------------------
 usage: br renv [-h] [-j JSONFILE] store curVariantName newVariantName
 br renv: error: too few arguments
 CMD: remv
+------------------------------------------
+remv
+------------------------------------------
 usage: br remv [-h] [-j JSONFILE] store variant
 br remv: error: too few arguments
 CMD: remv test3
+------------------------------------------
+remv test3
+------------------------------------------
 usage: br remv [-h] [-j JSONFILE] store variant
 br remv: error: too few arguments
+------------------------------------------
+setd test_not_a_store variant3d
+------------------------------------------
 Expected SyncError Exception: 20:Store [test_not_a_store] doesn't exist.
+------------------------------------------
+setd test3 invalid_variant
+------------------------------------------
 Expected SyncError Exception: 20:Variant [invalid_variant] not found in store [test3]
+------------------------------------------
+renv invalid_store_name_test3 variant3a will_not_matter
+------------------------------------------
 Expected SyncError Exception: 16:Store [invalid_store_name_test3] doesn't exist.
+------------------------------------------
+renv test3 invalid_variant_name will_not_matter
+------------------------------------------
 Expected SyncError Exception: 16:Variant [invalid_variant_name] not found in store [test3]
+------------------------------------------
+remv invalid_store_name variant3a
+------------------------------------------
 Expected SyncError Exception: 18:Store [invalid_store_name] doesn't exist.
+------------------------------------------
+remv test3 invalid_variant_name
+------------------------------------------
 Expected SyncError Exception: 18:Variant [invalid_variant_name] not found in store [test3]
+------------------------------------------
+These things should work.
+------------------------------------------
 brstores: Store Variant [variant3d] is now the default.
 test3
 {
@@ -182,14 +220,7 @@ test3
 }
 
 {
-    "test1": {
-        "def": {
-            "dest": "test_dirs/test1/destNEW", 
-            "flags": "", 
-            "src": "test_dirs/test1/src"
-        }
-    }, 
-    "test2": {
+    "test2_new_name": {
         "variant1": {
             "dest": "dest/path/3", 
             "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25", 
