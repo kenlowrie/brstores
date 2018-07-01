@@ -15,8 +15,17 @@ CMD: us just_store and_src_path
 usage: br us [-h] [-j JSONFILE] [-v VARIANT] [-f [FLAGS]]
              store srcPath destPath
 br us: error: too few arguments
+------------------------------------------
+us test99 src/willfail dest/betterfail
+------------------------------------------
 Expected SyncError Exception: 3:store [test99] does not exist, cannot update.
+------------------------------------------
+us test2 src/willfail dest/betterfail -v variant99
+------------------------------------------
 Expected SyncError Exception: 3:store [test2] variant [variant99] does not exist, cannot update.
+------------------------------------------
+These things should work.
+------------------------------------------
 test1
 {
     "def": {
