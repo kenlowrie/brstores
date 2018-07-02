@@ -113,7 +113,7 @@ optional arguments:
 ----------------------------------------
 b -h
 ----------------------------------------
-usage: br b [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
+usage: br b [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
 
 positional arguments:
   store                 name of data store
@@ -126,10 +126,11 @@ optional arguments:
                         data store variant name
   -rsoe REDIRSOE, --redirSOE REDIRSOE
                         redirect stdout and stderr from rsync to file
+  -np, --noPrompt       rsync no prompt just do it
 ----------------------------------------
 bu --help
 ----------------------------------------
-usage: br bu [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
+usage: br bu [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
 
 positional arguments:
   store                 name of data store
@@ -142,10 +143,11 @@ optional arguments:
                         data store variant name
   -rsoe REDIRSOE, --redirSOE REDIRSOE
                         redirect stdout and stderr from rsync to file
+  -np, --noPrompt       rsync no prompt just do it
 ----------------------------------------
 backup -h
 ----------------------------------------
-usage: br backup [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
+usage: br backup [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
 
 positional arguments:
   store                 name of data store
@@ -158,10 +160,11 @@ optional arguments:
                         data store variant name
   -rsoe REDIRSOE, --redirSOE REDIRSOE
                         redirect stdout and stderr from rsync to file
+  -np, --noPrompt       rsync no prompt just do it
 ----------------------------------------
 r -h
 ----------------------------------------
-usage: br r [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
+usage: br r [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
 
 positional arguments:
   store                 name of data store
@@ -174,10 +177,11 @@ optional arguments:
                         data store variant name
   -rsoe REDIRSOE, --redirSOE REDIRSOE
                         redirect stdout and stderr from rsync to file
+  -np, --noPrompt       rsync no prompt just do it
 ----------------------------------------
 re --help
 ----------------------------------------
-usage: br re [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
+usage: br re [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
 
 positional arguments:
   store                 name of data store
@@ -190,10 +194,11 @@ optional arguments:
                         data store variant name
   -rsoe REDIRSOE, --redirSOE REDIRSOE
                         redirect stdout and stderr from rsync to file
+  -np, --noPrompt       rsync no prompt just do it
 ----------------------------------------
 restore --help
 ----------------------------------------
-usage: br restore [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
+usage: br restore [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
 
 positional arguments:
   store                 name of data store
@@ -206,6 +211,7 @@ optional arguments:
                         data store variant name
   -rsoe REDIRSOE, --redirSOE REDIRSOE
                         redirect stdout and stderr from rsync to file
+  -np, --noPrompt       rsync no prompt just do it
 ----------------------------------------
 addStore --help
 ----------------------------------------
