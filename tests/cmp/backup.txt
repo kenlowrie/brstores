@@ -1,0 +1,45 @@
+------------------------------------------
+backup tests
+------------------------------------------
+brstores: Only 1 variant here [def], so using it...
+brstores: Dry run: src=test1/src/ dest=test1/dest flags=
+brstores: rsync returned 0
+
+brstores: Do you want to sync [test1/src/] to [test1/dest] using flags []
+brstores: You entered YES, mirroring the data store...
+brstores: rsync returned 0
+
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json
+brstores: Only 1 variant here [but2], so using it...
+brstores: Dry run: src=test2/src/ dest=test2/dest flags=
+brstores: rsync returned 0
+
+brstores: Do you want to sync [test2/src/] to [test2/dest] using flags []
+brstores: You entered YES, mirroring the data store...
+brstores: rsync returned 0
+
+brstores: Located variant [but3] in store [bt3] ...
+brstores: Dry run: src=test3/src/ dest=test3/dest flags=
+brstores: rsync returned 0
+
+brstores: Do you want to sync [test3/src/] to [test3/dest] using flags []
+brstores: You entered YES, mirroring the data store...
+brstores: rsync returned 0
+
+brstores: Located variant [but4] in store [bt4] ...
+brstores: Dry run: src=test4/src/ dest=test4/dest flags=
+brstores: rsync returned 0
+
+brstores: Do you want to sync [test4/src/] to [test4/dest] using flags []
+brstores: You entered YES, mirroring the data store...
+brstores: rsync returned 0
+
+brstores: Located variant [but5] in store [bt5] ...
+brstores: Dry run: src=test5/src/ dest=test5/dest flags=
+brstores: rsync returned 0
+
+brstores: Do you want to sync [test5/src/] to [test5/dest] using flags []
+brstores: You entered YES, mirroring the data store...
+brstores: rsync returned 0
+
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json

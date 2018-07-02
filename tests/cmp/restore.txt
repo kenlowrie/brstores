@@ -1,0 +1,50 @@
+------------------------------------------
+restore tests
+------------------------------------------
+brstores: Only 1 variant here [def], so using it...
+brstores: RESTORE operation, flipping SRC and DEST...
+brstores: Dry run: src=test1/src/ dest=test1/new flags=
+brstores: rsync returned 0
+
+brstores: Do you want to sync [test1/src/] to [test1/new] using flags []
+brstores: You entered YES, mirroring the data store...
+brstores: rsync returned 0
+
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json
+brstores: Only 1 variant here [rut2], so using it...
+brstores: RESTORE operation, flipping SRC and DEST...
+brstores: Dry run: src=test2/dest/ dest=test2/src flags=
+brstores: rsync returned 0
+
+brstores: Do you want to sync [test2/dest/] to [test2/src] using flags []
+brstores: You entered YES, mirroring the data store...
+brstores: rsync returned 0
+
+brstores: Located variant [rut3] in store [rt3] ...
+brstores: RESTORE operation, flipping SRC and DEST...
+brstores: Dry run: src=test3/dest/ dest=test3/src flags=
+brstores: rsync returned 0
+
+brstores: Do you want to sync [test3/dest/] to [test3/src] using flags []
+brstores: You entered YES, mirroring the data store...
+brstores: rsync returned 0
+
+brstores: Located variant [rut4] in store [rt4] ...
+brstores: RESTORE operation, flipping SRC and DEST...
+brstores: Dry run: src=test4/dest/ dest=test4/src flags=
+brstores: rsync returned 0
+
+brstores: Do you want to sync [test4/dest/] to [test4/src] using flags []
+brstores: You entered YES, mirroring the data store...
+brstores: rsync returned 0
+
+brstores: Located variant [rut5] in store [rt5] ...
+brstores: RESTORE operation, flipping SRC and DEST...
+brstores: Dry run: src=test5/dest/ dest=test5/src flags=
+brstores: rsync returned 0
+
+brstores: Do you want to sync [test5/dest/] to [test5/src] using flags []
+brstores: You entered YES, mirroring the data store...
+brstores: rsync returned 0
+
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json
