@@ -209,16 +209,16 @@ class BrStores(object):
         message("", False)
         return 0
 
-    def syncOperation(self, storeName, variantName, isBackup=True):
+    def syncOperation(self, storeName, variantName, isBackup=True, redirsoe=None):
         operStr = "backup" if isBackup else "restore"
 
         store = self._fixSrcDestPaths(self._getTargetSrcDest(storeName,variantName,isBackup))
     
-        from csync import C_Sync
+        from csync import RSync
     
         message("Dry run: src={} dest={} flags={}".format(store['src'],store['dest'],store['flags']))
     
-        cs = C_Sync(store['src'],store['dest'],store['flags'],me)
+        cs = RSync(store['src'],store['dest'],store['flags'],me, redirsoe)
     
         return cs.query()
         
