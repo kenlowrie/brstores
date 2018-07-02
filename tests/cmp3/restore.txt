@@ -1,0 +1,147 @@
+------------------------------------------
+restore tests
+------------------------------------------
+------------------------------------------
+r
+------------------------------------------
+usage: br r [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
+br r: error: the following arguments are required: store
+------------------------------------------
+re
+------------------------------------------
+usage: br re [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
+br re: error: the following arguments are required: store
+------------------------------------------
+restore
+------------------------------------------
+usage: br restore [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
+br restore: error: the following arguments are required: store
+------------------------------------------
+r -j /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json
+------------------------------------------
+usage: br r [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
+br r: error: the following arguments are required: store
+------------------------------------------
+r -h
+------------------------------------------
+usage: br r [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
+
+positional arguments:
+  store                 name of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+  -v VARIANT, --variant VARIANT
+                        data store variant name
+  -rsoe REDIRSOE, --redirSOE REDIRSOE
+                        redirect stdout and stderr from rsync to file
+  -np, --noPrompt       rsync no prompt just do it
+------------------------------------------
+restore -if -j /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json bt2
+------------------------------------------
+usage: br [-h] [-d] [-pv]
+          {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump} ...
+br: error: unrecognized arguments: -if
+------------------------------------------
+re --invalid-flag -j /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json bt3
+------------------------------------------
+usage: br [-h] [-d] [-pv]
+          {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump} ...
+br: error: unrecognized arguments: --invalid-flag
+------------------------------------------
+r -j /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json non_existant_store_name
+------------------------------------------
+Expected SyncError Exception: 6:I don't know about any store named [non_existant_store_name]...
+------------------------------------------
+r -j /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json bt1 -v non_existant_variant_name
+------------------------------------------
+brstores: Variant [non_existant_variant_name] not found for store [bt1]
+Expected SyncError Exception: 5:Invalid store or variant
+------------------------------------------
+These things should work.
+------------------------------------------
+brstores: Only 1 variant here [def], so using it...
+brstores: RESTORE operation, flipping SRC and DEST...
+brstores: Syncing [test1/src/] to [test1/new] using flags []
+brstores: rsync returned 0
+
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json
+brstores: Only 1 variant here [rut2], so using it...
+brstores: RESTORE operation, flipping SRC and DEST...
+brstores: Syncing [test2/dest/] to [test2/src] using flags []
+brstores: rsync returned 0
+
+brstores: Located variant [rut3] in store [rt3] ...
+brstores: RESTORE operation, flipping SRC and DEST...
+brstores: Syncing [test3/dest/] to [test3/src] using flags []
+brstores: rsync returned 0
+
+brstores: Located variant [rut4] in store [rt4] ...
+brstores: RESTORE operation, flipping SRC and DEST...
+brstores: Syncing [test4/dest/] to [test4/src] using flags []
+brstores: rsync returned 0
+
+brstores: Located variant [rut5] in store [rt5] ...
+brstores: RESTORE operation, flipping SRC and DEST...
+brstores: Syncing [test5/dest/] to [test5/src] using flags []
+brstores: rsync returned 0
+
+------------------------------------------
+RSync output
+------------------------------------------
+building file list ... done
+created directory test1/new
+./
+.gitignore
+bbedit_set_pathvar.scpt
+files.zip
+pfm.py
+r2.py
+hello/
+hello/a.out
+hello/hello.cpp
+html/
+html/divs.html
+html/import.html
+html/markdown.html
+html/script1.html
+html/specials.html
+html/transitions.html
+html/variables.html
+pix/
+pix/aatmini-021.png
+
+building file list ... done
+
+building file list ... done
+deleting html/variables.html
+deleting html/transitions.html
+deleting html/specials.html
+deleting html/script1.html
+deleting html/markdown.html
+deleting html/import.html
+deleting html/divs.html
+deleting html/
+deleting pfm.py
+./
+
+building file list ... done
+files.zip
+pix/
+pix/aatmini-021.png
+
+building file list ... done
+deleting bbedit_set_pathvar.scpt
+./
+html/
+html/divs.html
+html/import.html
+html/markdown.html
+html/script1.html
+html/specials.html
+html/transitions.html
+html/variables.html
+
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json

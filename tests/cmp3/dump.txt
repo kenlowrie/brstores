@@ -1,0 +1,31 @@
+{
+    "test2_new_name": {
+        "variant1": {
+            "dest": "dest/path/3",
+            "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25",
+            "src": "src/path/1/NEW"
+        }
+    },
+    "test3": {
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest",
+            "flags": "",
+            "src": "test_dirs/test3b/src"
+        },
+        "variant3charlie": {
+            "dest": "test_dirs/test3c/dest",
+            "flags": "",
+            "src": "test_dirs/test3c/src"
+        }
+    }
+}
+    Data store  Variant Name  
+----------------------------------------
+test2_new_name: variant1      
+         test3: variant3b     
+         test3: variant3charlie
+    Data store    Variant Name  <Src>, <Dest>, [Flags]
+-------------------------------------------------------------------------------
+test2_new_name:       variant1 <src/path/1/NEW>, <dest/path/3>, [--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25]
+         test3:      variant3b <test_dirs/test3b/src>, <test_dirs/test3b/dest>, []
+         test3: variant3charlie <test_dirs/test3c/src>, <test_dirs/test3c/dest>, []

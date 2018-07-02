@@ -1,0 +1,134 @@
+------------------------------------------
+setup backup/restore stores
+------------------------------------------
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json
+brstores: Adding new store [bt1]
+brstores: Dumping the updated store dictionary to json disk file...
+brstores: Adding new store [bt2]
+brstores: Dumping the updated store dictionary to json disk file...
+brstores: Adding new store [bt3]
+brstores: Dumping the updated store dictionary to json disk file...
+brstores: Adding new store [bt4]
+brstores: Dumping the updated store dictionary to json disk file...
+brstores: Adding new store [bt5]
+brstores: Dumping the updated store dictionary to json disk file...
+{
+    "bt1": {
+        "def": {
+            "dest": "test1/dest",
+            "flags": "",
+            "src": "test1/src"
+        }
+    },
+    "bt2": {
+        "but2": {
+            "dest": "test2/dest",
+            "flags": "",
+            "src": "test2/src"
+        }
+    },
+    "bt3": {
+        "but3": {
+            "dest": "test3/dest",
+            "flags": "",
+            "src": "test3/src"
+        }
+    },
+    "bt4": {
+        "but4": {
+            "dest": "test4/dest",
+            "flags": "",
+            "src": "test4/src"
+        }
+    },
+    "bt5": {
+        "but5": {
+            "dest": "test5/dest",
+            "flags": "",
+            "src": "test5/src"
+        }
+    }
+}
+brstores: Adding new store [rt1]
+brstores: Dumping the updated store dictionary to json disk file...
+brstores: Adding new store [rt2]
+brstores: Dumping the updated store dictionary to json disk file...
+brstores: Adding new store [rt3]
+brstores: Dumping the updated store dictionary to json disk file...
+brstores: Adding new store [rt4]
+brstores: Dumping the updated store dictionary to json disk file...
+brstores: Adding new store [rt5]
+brstores: Dumping the updated store dictionary to json disk file...
+{
+    "bt1": {
+        "def": {
+            "dest": "test1/dest",
+            "flags": "",
+            "src": "test1/src"
+        }
+    },
+    "bt2": {
+        "but2": {
+            "dest": "test2/dest",
+            "flags": "",
+            "src": "test2/src"
+        }
+    },
+    "bt3": {
+        "but3": {
+            "dest": "test3/dest",
+            "flags": "",
+            "src": "test3/src"
+        }
+    },
+    "bt4": {
+        "but4": {
+            "dest": "test4/dest",
+            "flags": "",
+            "src": "test4/src"
+        }
+    },
+    "bt5": {
+        "but5": {
+            "dest": "test5/dest",
+            "flags": "",
+            "src": "test5/src"
+        }
+    },
+    "rt1": {
+        "def": {
+            "dest": "test1/src",
+            "flags": "",
+            "src": "test1/new"
+        }
+    },
+    "rt2": {
+        "rut2": {
+            "dest": "test2/dest",
+            "flags": "",
+            "src": "test2/src"
+        }
+    },
+    "rt3": {
+        "rut3": {
+            "dest": "test3/dest",
+            "flags": "",
+            "src": "test3/src"
+        }
+    },
+    "rt4": {
+        "rut4": {
+            "dest": "test4/dest",
+            "flags": "",
+            "src": "test4/src"
+        }
+    },
+    "rt5": {
+        "rut5": {
+            "dest": "test5/dest",
+            "flags": "",
+            "src": "test5/src"
+        }
+    }
+}
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json

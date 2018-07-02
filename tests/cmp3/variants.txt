@@ -1,0 +1,242 @@
+test variant logic
+{
+    "test2_new_name": {
+        "variant1": {
+            "dest": "dest/path/3",
+            "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25",
+            "src": "src/path/1/NEW"
+        }
+    },
+    "test3": {
+        "variant3a": {
+            "dest": "test_dirs/test3a/dest",
+            "flags": "",
+            "src": "test_dirs/test3a/src"
+        },
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest",
+            "flags": "",
+            "src": "test_dirs/test3b/src"
+        },
+        "variant3c": {
+            "dest": "test_dirs/test3c/dest",
+            "flags": "",
+            "src": "test_dirs/test3c/src"
+        },
+        "variant3d": {
+            "dest": "test_dirs/test3d/dest",
+            "flags": "",
+            "src": "test_dirs/test3d/src"
+        }
+    }
+}
+CMD: setd
+------------------------------------------
+setd
+------------------------------------------
+usage: br setd [-h] [-j JSONFILE] store variant
+br setd: error: the following arguments are required: store, variant
+CMD: setd test3
+------------------------------------------
+setd test3
+------------------------------------------
+usage: br setd [-h] [-j JSONFILE] store variant
+br setd: error: the following arguments are required: variant
+CMD: setd test3 -v no_switch_for_variant
+------------------------------------------
+setd test3 -v no_switch_for_variant
+------------------------------------------
+usage: br [-h] [-d] [-pv]
+          {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump} ...
+br: error: unrecognized arguments: -v
+CMD: renv
+------------------------------------------
+renv
+------------------------------------------
+usage: br renv [-h] [-j JSONFILE] store curVariantName newVariantName
+br renv: error: the following arguments are required: store, curVariantName, newVariantName
+CMD: renv test3
+------------------------------------------
+renv test3
+------------------------------------------
+usage: br renv [-h] [-j JSONFILE] store curVariantName newVariantName
+br renv: error: the following arguments are required: curVariantName, newVariantName
+CMD: renv test3 missing_arguments
+------------------------------------------
+renv test3 missing_arguments
+------------------------------------------
+usage: br renv [-h] [-j JSONFILE] store curVariantName newVariantName
+br renv: error: the following arguments are required: newVariantName
+CMD: remv
+------------------------------------------
+remv
+------------------------------------------
+usage: br remv [-h] [-j JSONFILE] store variant
+br remv: error: the following arguments are required: store, variant
+CMD: remv test3
+------------------------------------------
+remv test3
+------------------------------------------
+usage: br remv [-h] [-j JSONFILE] store variant
+br remv: error: the following arguments are required: variant
+------------------------------------------
+setd test_not_a_store variant3d
+------------------------------------------
+Expected SyncError Exception: 20:Store [test_not_a_store] doesn't exist.
+------------------------------------------
+setd test3 invalid_variant
+------------------------------------------
+Expected SyncError Exception: 20:Variant [invalid_variant] not found in store [test3]
+------------------------------------------
+renv invalid_store_name_test3 variant3a will_not_matter
+------------------------------------------
+Expected SyncError Exception: 16:Store [invalid_store_name_test3] doesn't exist.
+------------------------------------------
+renv test3 invalid_variant_name will_not_matter
+------------------------------------------
+Expected SyncError Exception: 16:Variant [invalid_variant_name] not found in store [test3]
+------------------------------------------
+remv invalid_store_name variant3a
+------------------------------------------
+Expected SyncError Exception: 18:Store [invalid_store_name] doesn't exist.
+------------------------------------------
+remv test3 invalid_variant_name
+------------------------------------------
+Expected SyncError Exception: 18:Variant [invalid_variant_name] not found in store [test3]
+------------------------------------------
+These things should work.
+------------------------------------------
+brstores: Store Variant [variant3d] is now the default.
+test3
+{
+    "__default__": "variant3d",
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest",
+        "flags": "",
+        "src": "test_dirs/test3a/src"
+    },
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest",
+        "flags": "",
+        "src": "test_dirs/test3b/src"
+    },
+    "variant3c": {
+        "dest": "test_dirs/test3c/dest",
+        "flags": "",
+        "src": "test_dirs/test3c/src"
+    },
+    "variant3d": {
+        "dest": "test_dirs/test3d/dest",
+        "flags": "",
+        "src": "test_dirs/test3d/src"
+    }
+}
+
+brstores: Store Variant [variant3c] is now called [variant3charlie].
+test3
+{
+    "__default__": "variant3d",
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest",
+        "flags": "",
+        "src": "test_dirs/test3a/src"
+    },
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest",
+        "flags": "",
+        "src": "test_dirs/test3b/src"
+    },
+    "variant3charlie": {
+        "dest": "test_dirs/test3c/dest",
+        "flags": "",
+        "src": "test_dirs/test3c/src"
+    },
+    "variant3d": {
+        "dest": "test_dirs/test3d/dest",
+        "flags": "",
+        "src": "test_dirs/test3d/src"
+    }
+}
+
+brstores: Store Variant [variant3d] is now called [variant3delta].
+test3
+{
+    "__default__": "variant3delta",
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest",
+        "flags": "",
+        "src": "test_dirs/test3a/src"
+    },
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest",
+        "flags": "",
+        "src": "test_dirs/test3b/src"
+    },
+    "variant3charlie": {
+        "dest": "test_dirs/test3c/dest",
+        "flags": "",
+        "src": "test_dirs/test3c/src"
+    },
+    "variant3delta": {
+        "dest": "test_dirs/test3d/dest",
+        "flags": "",
+        "src": "test_dirs/test3d/src"
+    }
+}
+
+brstores: Store Variant [variant3delta] has been removed.
+test3
+{
+    "variant3a": {
+        "dest": "test_dirs/test3a/dest",
+        "flags": "",
+        "src": "test_dirs/test3a/src"
+    },
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest",
+        "flags": "",
+        "src": "test_dirs/test3b/src"
+    },
+    "variant3charlie": {
+        "dest": "test_dirs/test3c/dest",
+        "flags": "",
+        "src": "test_dirs/test3c/src"
+    }
+}
+
+brstores: Store Variant [variant3a] has been removed.
+test3
+{
+    "variant3b": {
+        "dest": "test_dirs/test3b/dest",
+        "flags": "",
+        "src": "test_dirs/test3b/src"
+    },
+    "variant3charlie": {
+        "dest": "test_dirs/test3c/dest",
+        "flags": "",
+        "src": "test_dirs/test3c/src"
+    }
+}
+
+{
+    "test2_new_name": {
+        "variant1": {
+            "dest": "dest/path/3",
+            "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25",
+            "src": "src/path/1/NEW"
+        }
+    },
+    "test3": {
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest",
+            "flags": "",
+            "src": "test_dirs/test3b/src"
+        },
+        "variant3charlie": {
+            "dest": "test_dirs/test3c/dest",
+            "flags": "",
+            "src": "test_dirs/test3c/src"
+        }
+    }
+}

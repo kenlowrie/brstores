@@ -1,0 +1,2 @@
+test the pv flags
+Python Interpreter Version was returned by -pv flag. OK.

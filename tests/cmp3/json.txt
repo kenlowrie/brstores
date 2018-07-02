@@ -1,0 +1,207 @@
+------------------------------------------
+test json data store optional
+------------------------------------------
+{
+    "test2_new_name": {
+        "variant1": {
+            "dest": "dest/path/3",
+            "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25",
+            "src": "src/path/1/NEW"
+        }
+    },
+    "test3": {
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest",
+            "flags": "",
+            "src": "test_dirs/test3b/src"
+        },
+        "variant3charlie": {
+            "dest": "test_dirs/test3c/dest",
+            "flags": "",
+            "src": "test_dirs/test3c/src"
+        }
+    }
+}
+brstores: created new JSON data store file: [./test_optional_json_store.json]
+{
+    "storeName": {
+        "variantName": {
+            "dest": "~/Desktop/destPath",
+            "flags": "",
+            "src": "~/Desktop/srcPath"
+        }
+    }
+}
+brstores: Adding new store [json_store]
+brstores: Dumping the updated store dictionary to json disk file...
+{
+    "json_store": {
+        "def": {
+            "dest": "json/dest",
+            "flags": "",
+            "src": "json/src"
+        }
+    },
+    "storeName": {
+        "variantName": {
+            "dest": "~/Desktop/destPath",
+            "flags": "",
+            "src": "~/Desktop/srcPath"
+        }
+    }
+}
+    Data store  Variant Name  
+----------------------------------------
+    json_store: def           
+     storeName: variantName   
+    Data store  Variant Name  
+----------------------------------------
+test2_new_name: variant1      
+         test3: variant3b     
+         test3: variant3charlie
+brstores: Updating new variant [def] to store [json_store]
+brstores: Dumping the updated store dictionary to json disk file...
+json_store
+{
+    "def": {
+        "dest": "json/dest/UPDATE",
+        "flags": "",
+        "src": "json/src/UPDATE"
+    }
+}
+
+    Data store  Variant Name  
+----------------------------------------
+    json_store: def           
+brstores: Store [json_store] is now called [json_store_RENAME].
+json_store_RENAME
+{
+    "def": {
+        "dest": "json/dest/UPDATE",
+        "flags": "",
+        "src": "json/src/UPDATE"
+    }
+}
+
+    Data store    Variant Name  <Src>, <Dest>, [Flags]
+-------------------------------------------------------------------------------
+json_store_RENAME:            def <json/src/UPDATE>, <json/dest/UPDATE>, []
+brstores: Store Variant [def] is now called [def_RENAME].
+json_store_RENAME
+{
+    "def_RENAME": {
+        "dest": "json/dest/UPDATE",
+        "flags": "",
+        "src": "json/src/UPDATE"
+    }
+}
+
+    Data store    Variant Name  <Src>, <Dest>, [Flags]
+-------------------------------------------------------------------------------
+json_store_RENAME:     def_RENAME <json/src/UPDATE>, <json/dest/UPDATE>, []
+brstores: Adding new variant [NEW_VARIANT] to store [json_store_RENAME]
+brstores: Dumping the updated store dictionary to json disk file...
+brstores: Store Variant [NEW_VARIANT] is now the default.
+json_store_RENAME
+{
+    "NEW_VARIANT": {
+        "dest": "json/dest2",
+        "flags": "",
+        "src": "json/src2"
+    },
+    "__default__": "NEW_VARIANT",
+    "def_RENAME": {
+        "dest": "json/dest/UPDATE",
+        "flags": "",
+        "src": "json/src/UPDATE"
+    }
+}
+
+    Data store  Variant Name  
+----------------------------------------
+json_store_RENAME: NEW_VARIANT   
+json_store_RENAME: def_RENAME    
+brstores: Store [json_store_RENAME] default has been removed.
+json_store_RENAME
+{
+    "NEW_VARIANT": {
+        "dest": "json/dest2",
+        "flags": "",
+        "src": "json/src2"
+    },
+    "def_RENAME": {
+        "dest": "json/dest/UPDATE",
+        "flags": "",
+        "src": "json/src/UPDATE"
+    }
+}
+
+    Data store  Variant Name  
+----------------------------------------
+json_store_RENAME: NEW_VARIANT   
+json_store_RENAME: def_RENAME    
+brstores: Store Variant [NEW_VARIANT] is now the default.
+json_store_RENAME
+{
+    "NEW_VARIANT": {
+        "dest": "json/dest2",
+        "flags": "",
+        "src": "json/src2"
+    },
+    "__default__": "NEW_VARIANT",
+    "def_RENAME": {
+        "dest": "json/dest/UPDATE",
+        "flags": "",
+        "src": "json/src/UPDATE"
+    }
+}
+
+    Data store  Variant Name  
+----------------------------------------
+json_store_RENAME: NEW_VARIANT   
+json_store_RENAME: def_RENAME    
+brstores: Store Variant [NEW_VARIANT] has been removed.
+json_store_RENAME
+{
+    "def_RENAME": {
+        "dest": "json/dest/UPDATE",
+        "flags": "",
+        "src": "json/src/UPDATE"
+    }
+}
+
+    Data store    Variant Name  <Src>, <Dest>, [Flags]
+-------------------------------------------------------------------------------
+json_store_RENAME:     def_RENAME <json/src/UPDATE>, <json/dest/UPDATE>, []
+brstores: Store [json_store_RENAME] has been removed.
+{
+    "storeName": {
+        "variantName": {
+            "dest": "~/Desktop/destPath",
+            "flags": "",
+            "src": "~/Desktop/srcPath"
+        }
+    }
+}
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json
+{
+    "test2_new_name": {
+        "variant1": {
+            "dest": "dest/path/3",
+            "flags": "--temp-dir=/temp/dir -h --ipv4 -0 --timeout=25",
+            "src": "src/path/1/NEW"
+        }
+    },
+    "test3": {
+        "variant3b": {
+            "dest": "test_dirs/test3b/dest",
+            "flags": "",
+            "src": "test_dirs/test3b/src"
+        },
+        "variant3charlie": {
+            "dest": "test_dirs/test3c/dest",
+            "flags": "",
+            "src": "test_dirs/test3c/src"
+        }
+    }
+}

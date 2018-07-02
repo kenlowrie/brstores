@@ -1,0 +1,69 @@
+test init JSON data store logic
+CMD: i
+------------------------------------------
+i
+------------------------------------------
+usage: br i [-h] [-md] jsonfile
+br i: error: the following arguments are required: jsonfile
+CMD: init
+------------------------------------------
+init
+------------------------------------------
+usage: br init [-h] [-md] jsonfile
+br init: error: the following arguments are required: jsonfile
+------------------------------------------
+Stuff that should work
+------------------------------------------
+
+Current defaults set in /Users/ken/Dropbox/shared/src/script/brstores/brstores/brstores.default
+
+	defaultstore: /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json
+
+Current JSON store contents (should be empty):
+{}
+brstores: created new JSON data store file: [./test_make_new_store.json]
+Newly created JSON store contents:
+{
+    "storeName": {
+        "variantName": {
+            "dest": "~/Desktop/destPath",
+            "flags": "",
+            "src": "~/Desktop/srcPath"
+        }
+    }
+}
+
+Current defaults set in /Users/ken/Dropbox/shared/src/script/brstores/brstores/brstores.default
+
+	defaultstore: /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json
+
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/brstores/test_make_new_store_make_default.json
+brstores: created new JSON data store file: [/Users/ken/Dropbox/shared/src/script/brstores/brstores/test_make_new_store_make_default.json]
+/Users/ken/Dropbox/shared/src/script/brstores/brstores/test_make_new_store_make_default.json
+Newly created default JSON store contents:
+{
+    "storeName": {
+        "variantName": {
+            "dest": "~/Desktop/destPath",
+            "flags": "",
+            "src": "~/Desktop/srcPath"
+        }
+    }
+}
+
+Current defaults set in /Users/ken/Dropbox/shared/src/script/brstores/brstores/brstores.default
+
+	defaultstore: /Users/ken/Dropbox/shared/src/script/brstores/brstores/test_make_new_store_make_default.json
+
+brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json
+Previous JSON store contents (should still be empty):
+{}
+------------------------------------------
+Things that will raise exceptions from BrStores()
+------------------------------------------
+------------------------------------------
+i ./test_make_new_store.json
+------------------------------------------
+Expected SyncError Exception: 42:JSON file [./test_make_new_store.json] already exists.
+Removing ./test_make_new_store.json
+Removing /Users/ken/Dropbox/shared/src/script/brstores/brstores/test_make_new_store_make_default.json
