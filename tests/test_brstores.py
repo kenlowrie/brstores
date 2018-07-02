@@ -1,41 +1,28 @@
 #!/usr/bin/env python
 
 """
-Unittest for BrStores package
+Test Script for BrStores package
 
-Test design:
-
-20. Add all the stores for the backup/restore operations
-20d. Test the -j override with backup and restore...
-21a. Test backup test1
-21b. Test backup test2
-21c. Test backup test3
-21d. Test backup test4
-21e. Test backup test5
-21f. Test restore test1
-21g. Test restore test2
-21h. Test restore test3
-21i. Test restore test4
-21j. Test restore test5
-
-create the real r_res and b_res .zip files
-
-filecmp the backup/* to temp/results/backup
-filecmp the restore/* to temp/results/restore
-
+This script contains both the unittests and functional tests for the BrStores package.
+So far, it has only been run on Mac OS X, but hopefully, it won't require much change
+when running on whatever Linux variants I can get on Travis CI.
 """
 
+"""
+This next section adds the parent path of this test script to the beginning of
+PYTHONPATH, so that when any of the scripts within the BrStores package are
+referenced, they will load from here, and not from whatever happens to be installed
+on the system.
+"""
 from sys import path
 from os.path import dirname, abspath, realpath, split
 bin_path, whocares = split(dirname(realpath('__file__')))
 lib_path = abspath(bin_path)
 path.insert(0, lib_path)
 
-
 import io
 import StringIO
 import sys
-from os.path import abspath
 from unittest import TestCase, TestLoader, TextTestRunner
 
 from brstores import br
@@ -454,6 +441,16 @@ class TestBrStoresClass(TestCase):
 
         run('sdjs {}'.format(DEFAULT_BRTEST_STORE))
 
+        """
+        We are going to "cheat" a bit here. Instead of using fully qualified
+        path names for src and dest when we add the stores, we are going to use
+        relative path names, and then chdir() into the "temp.test" directory
+        when we run the tests, so that the output from rsync will use relative
+        paths, which will make it easier to compare the output against known results.
+        This also makes it so when we "dump" the JSON data store, its contents
+        will also be consistent, making it easy to compare...
+        """
+
         run('as bt1 test1/src test1/dest')
         run('as bt2 test2/src test2/dest -v but2')
         run('as bt3 test3/src test3/dest -v but3')
@@ -471,40 +468,91 @@ class TestBrStoresClass(TestCase):
         run('sdjs {}'.format(DEFAULT_STORE))
         self.process('brsetup')
 
-    # TODO: Is this being used?
-    def dump_to_stdout(self, filename):
+    def dump_file_to_stdout(self, filename, sep_header, strip_text):
+        data = []
         with open(filename, 'r') as fp:
-            data = fp.read()
+            data = [line.replace(strip_text, '').strip('\n') for line in fp]
+
+        separate(sep_header)
+        for line in data:
+            print(line)
+
+    def strip_noise_and_dump_to_stdout(self, filename):
+        def noise(line):
+            # lines that begin with sent or total are noisy, and differ on each run.
+            if line[0:4] == 'sent' or line[0:5] == 'total':
+                return True
+
+            return False
+
+        data = []
+        with open(filename, 'r') as fp:
+            data = [line.strip('\n') for line in fp]
 
         separate("RSync output")
-        print(data)
+        for line in data:
+            if not noise(line):
+                print(line)
 
     def test_41_backup(self):
         separate("backup tests")
         run = lambda cmd: self.brs.run(cmd.split())
 
+        # Invalid / Missing parameter tests
+        for sub_command in ['b', 'bu', 'backup',
+                            'b -j {}'.format(DEFAULT_BRTEST_STORE),
+                            'b -h',
+                            'backup -if -j {} bt2'.format(DEFAULT_BRTEST_STORE),
+                            'bu --invalid-flag -j {} bt3'.format(DEFAULT_BRTEST_STORE),
+        ]:
+            with self.assertRaises(SystemExit):
+                separate(sub_command)
+                run(sub_command)
+
+        # Things that will raise exceptions from BrStores()
+        for sub_command in ['b -j {} non_existant_store_name'.format(DEFAULT_BRTEST_STORE),
+                            'b -j {} bt1 -v non_existant_variant_name'.format(DEFAULT_BRTEST_STORE),
+        ]:
+            try:
+                separate(sub_command)
+                run(sub_command)
+            except SyncError as se:
+                print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        # And here's the stuff that should work.
+        separate('These things should work.')
+        
         my_output_file = abspath('./rsoe_backup.txt')
         self.unlink_if_exists(my_output_file)
     
         global testdirs_backup_dir
         pushd(testdirs_backup_dir)
 
-        sys.stdin = StringIO.StringIO("y\nY\nYes\nSi\nsi\ny\nY\nYes\nSi\nsi\n")
-
+        # TODO: Strange Python bug (I think). If os.system is called once before
+        #       any redirection of stdin, then all subsequent calls will not
+        #       pickup the redirection. If you do the redirection first, then
+        #       that stream will be used until the process (this program) finishes,
+        #       regardless of whether you reset sys.stdin or not. I need to test
+        #       this theory, run it on v3., and consider raising a bug.
+        sys.stdin = StringIO.StringIO("YES\ny\nYes\nSi\nsi")
+        # run backup using -j json_store override, no variant specified
         run('b -j {} bt1 -rsoe {}'.format(DEFAULT_BRTEST_STORE, my_output_file))
-
+        # go ahead and set the default json store now that we tested that...
         run('sdjs {}'.format(DEFAULT_BRTEST_STORE))
-
+        # run backup using 'bu' keyword, no variant
         run('bu bt2 --redirSOE {}'.format(my_output_file))
+        # backup store with specific variant
         run('backup bt3 -v but3 -rsoe {}'.format(my_output_file))
+        # backup store using long form of variant switch
         run('bu bt4 --variant but4 --redirSOE {}'.format(my_output_file))
+        # backup store, switches before store name
         run('backup -rsoe {} -v but5 bt5'.format(my_output_file))
 
         popd()
 
-        #TODO: why isn't this working? when i later try to read, it fails...
         sys.stdin = sys.__stdin__
-        #self.dump_to_stdout(my_output_file)
+
+        self.strip_noise_and_dump_to_stdout(my_output_file)
         run('sdjs {}'.format(DEFAULT_STORE))
 
         self.process('backup')
@@ -512,42 +560,81 @@ class TestBrStoresClass(TestCase):
     def test_42_restore(self):
         separate("restore tests")
         run = lambda cmd: self.brs.run(cmd.split())
-        
+
+        # Invalid / Missing parameter tests
+        for sub_command in ['r', 're', 'restore',
+                            'r -j {}'.format(DEFAULT_BRTEST_STORE),
+                            'r -h',
+                            'restore -if -j {} bt2'.format(DEFAULT_BRTEST_STORE),
+                            're --invalid-flag -j {} bt3'.format(DEFAULT_BRTEST_STORE),
+        ]:
+            with self.assertRaises(SystemExit):
+                separate(sub_command)
+                run(sub_command)
+
+        # Things that will raise exceptions from BrStores()
+        for sub_command in ['r -j {} non_existant_store_name'.format(DEFAULT_BRTEST_STORE),
+                            'r -j {} bt1 -v non_existant_variant_name'.format(DEFAULT_BRTEST_STORE),
+        ]:
+            try:
+                separate(sub_command)
+                run(sub_command)
+            except SyncError as se:
+                print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
+
+        # And here's the stuff that should work.
+        separate('These things should work.')
+
         my_output_file = abspath('./rsoe_restore.txt')
         self.unlink_if_exists(my_output_file)
     
         global testdirs_restore_dir
         pushd(testdirs_restore_dir)
 
-        sys.stdin = StringIO.StringIO("YES\ny\nYes\nSi\nsi")
-        #print("read: {}".format(sys.stdin.readline()))
-
-        run('r -j {} rt1 -rsoe {}'.format(DEFAULT_BRTEST_STORE, my_output_file))
+        run('r -j {} rt1 -rsoe {} -np'.format(DEFAULT_BRTEST_STORE, my_output_file))
 
         run('sdjs {}'.format(DEFAULT_BRTEST_STORE))
 
-        run('re rt2 --redirSOE {}'.format(my_output_file))
-        run('restore rt3 -v rut3 -rsoe {}'.format(my_output_file))
-        run('re rt4 --variant rut4 --redirSOE {}'.format(my_output_file))
-        run('restore -rsoe {} -v rut5 rt5'.format(my_output_file))
+        run('re rt2 --noPrompt --redirSOE {}'.format(my_output_file))
+        run('restore rt3 -v rut3 -np -rsoe {}'.format(my_output_file))
+        run('re rt4 --variant rut4 --noPrompt --redirSOE {}'.format(my_output_file))
+        run('restore -np -rsoe {} -v rut5 rt5'.format(my_output_file))
 
         popd()
 
-        sys.stdin = sys.__stdin__
-
+        self.strip_noise_and_dump_to_stdout(my_output_file)
         run('sdjs {}'.format(DEFAULT_STORE))
 
         self.process('restore')
 
-    def test_43_teardown_br(self):
-        separate("teardown backup/restore tests")
+    def test_43_validate_br(self):
+        separate("validate backup/restore tests")
         run = lambda cmd: self.brs.run(cmd.split())
-        
+
+        global temp_testdir
+        pushd(temp_testdir)
+
         run('sdjs {}'.format(DEFAULT_BRTEST_STORE))
+
+        global testdirs_backup_dir, testdirs_restore_dir
+        global testdirs_backup_results_dir, testdirs_restore_results_dir
+
+        from os import system
+
+        diff_ofile = 'diff.o'
+        redir_file = '1>{} 2>&1'.format(diff_ofile)
+
+        system('diff -rs {} {} {}'.format(testdirs_backup_dir, testdirs_backup_results_dir, redir_file))
+        self.dump_file_to_stdout(diff_ofile, "Validating backups ...", temp_testdir)
+
+        system('diff -rs {} {} {}'.format(testdirs_restore_dir, testdirs_restore_results_dir, redir_file))
+        self.dump_file_to_stdout(diff_ofile, "Validating restores ...", temp_testdir)
+
+        popd()
         
         run('sdjs {}'.format(DEFAULT_STORE))
 
-        self.process('brteardown')
+        self.process('validate')
 
     def test_json_data_store_optional(self):
         separate("test json data store optional")
@@ -678,7 +765,6 @@ class TestBrStoresClass(TestCase):
         run('dump -ss')
         run('dump -ls')
         self.process('dump')
-
 
 
 if __name__ == '__main__':
