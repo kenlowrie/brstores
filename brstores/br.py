@@ -63,8 +63,9 @@ class BrSync(object):
         var_opt_parser = ArgumentParser(add_help=False)
         var_opt_parser.add_argument('-v', '--variant', help='data store variant name')
 
-        var_rsoe_parser = ArgumentParser(add_help=False)
-        var_rsoe_parser.add_argument('-rsoe', '--redirSOE', help='redirect stdout and stderr from rsync to file')
+        var_opt_br_parser = ArgumentParser(add_help=False)
+        var_opt_br_parser.add_argument('-rsoe', '--redirSOE', help='redirect stdout and stderr from rsync to file')
+        var_opt_br_parser.add_argument('-np', '--noPrompt', help='rsync no prompt just do it', action="store_true")
 
         # And now define the 2nd level subparsers (these rely on top level subparsers)
         set_def_jsonstore_parser = ArgumentParser(add_help=False)
@@ -105,20 +106,20 @@ class BrSync(object):
                               parents=[json_store_parser]).set_defaults(func=self.sdjs)
 
         subparsers.add_parser('b', 
-                              parents=[store_parser, var_opt_parser, var_rsoe_parser], 
+                              parents=[store_parser, var_opt_parser, var_opt_br_parser], 
                               help='perform a backup. synonyms: bu, backup').set_defaults(func=self.backup)
         subparsers.add_parser('bu', 
-                              parents=[store_parser, var_opt_parser, var_rsoe_parser]).set_defaults(func=self.backup)
+                              parents=[store_parser, var_opt_parser, var_opt_br_parser]).set_defaults(func=self.backup)
         subparsers.add_parser('backup', 
-                              parents=[store_parser, var_opt_parser, var_rsoe_parser]).set_defaults(func=self.backup)
+                              parents=[store_parser, var_opt_parser, var_opt_br_parser]).set_defaults(func=self.backup)
 
         subparsers.add_parser('r', 
-                              parents=[store_parser, var_opt_parser, var_rsoe_parser], 
+                              parents=[store_parser, var_opt_parser, var_opt_br_parser], 
                               help='perform a restore. synonyms: re, restore').set_defaults(func=self.restore)
         subparsers.add_parser('re', 
-                              parents=[store_parser, var_opt_parser, var_rsoe_parser]).set_defaults(func=self.restore)
+                              parents=[store_parser, var_opt_parser, var_opt_br_parser]).set_defaults(func=self.restore)
         subparsers.add_parser('restore', 
-                              parents=[store_parser, var_opt_parser, var_rsoe_parser]).set_defaults(func=self.restore)
+                              parents=[store_parser, var_opt_parser, var_opt_br_parser]).set_defaults(func=self.restore)
 
         subparsers.add_parser('as', 
                               parents=[addstore_parser], 
@@ -224,7 +225,10 @@ class BrSync(object):
     def backup(self):
         logging.info("backup:{}".format(self.args))
         try:
-            return BrStores(self.args.jsonfile).syncOperation(self.args.store, self.args.variant, redirsoe=self.args.redirSOE)
+            return BrStores(self.args.jsonfile).syncOperation(self.args.store, 
+                                                              self.args.variant, 
+                                                              redirsoe=self.args.redirSOE,
+                                                              noPrompt=self.args.noPrompt)
         except SyncError as se:
             return self._se_exception(se)
         
@@ -234,7 +238,8 @@ class BrSync(object):
             return BrStores(self.args.jsonfile).syncOperation(self.args.store,
                                                               self.args.variant,
                                                               isBackup=False,
-                                                              redirsoe=self.args.redirSOE)
+                                                              redirsoe=self.args.redirSOE,
+                                                              noPrompt=self.args.noPrompt)
         except SyncError as se:
             return self._se_exception(se)
 

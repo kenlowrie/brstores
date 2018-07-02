@@ -26,7 +26,7 @@ def context():
 
 me = context()
 
-def message(msgstr): print ('%s: %s' % (me.alias(),msgstr))
+def message(msgstr): print('%s: %s' % (me.alias(), msgstr))
 
 class RSync:
     """This class abstracts the rsync wrapper"""
@@ -47,26 +47,28 @@ class RSync:
                                                                self.source, 
                                                                self.destination,
                                                                self.get_redir_flags()))
-    
+
         message("rsync returned %d\r\n" % rc)
-    
+
         return rc
-    
+
     def mirror(self):
         rc = system("rsync -va --delete {} {} {} {}".format(self.flags, 
                                                             self.source,
                                                             self.destination,
                                                             self.get_redir_flags()))
-    
+
         message("rsync returned %d\r\n" % rc)
-    
+
         return rc
-    
+
     def query(self, askFirst=True):
         if askFirst:
             self.status()
 
-            message("Do you want to sync [%s] to [%s] using flags [%s]" % (self.source,self.destination,self.flags))
+            message("Do you want to sync [{}] to [{}] using flags [{}]".format(self.source,
+                                                                               self.destination,
+                                                                               self.flags))
 
             answer = stdin.readline().strip()
 
@@ -76,8 +78,13 @@ class RSync:
 
             message("You entered YES, mirroring the data store...")
 
+        else:
+            message("Syncing [{}] to [{}] using flags [{}]".format(self.source,
+                                                                   self.destination,
+                                                                   self.flags))
+
         return self.mirror()
-    
+
 if __name__ == '__main__':
     message("csync is a library module. Not directly callable.")
     exit(1)
