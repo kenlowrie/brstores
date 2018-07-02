@@ -25,7 +25,11 @@ TODO:
     
 """
 
-from brstores import BrStores, SyncError, message, me
+# TODO: Why is this different on Python 2 vs Python 3? Am I doing something wrong?
+try:
+    from brstores import BrStores, SyncError, message, me
+except ImportError:
+    from brstores.brstores import BrStores, SyncError, message, me
 
 class BrSync(object):
     def __init__(self):

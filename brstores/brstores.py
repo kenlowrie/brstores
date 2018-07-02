@@ -213,8 +213,11 @@ class BrStores(object):
         operStr = "backup" if isBackup else "restore"
 
         store = self._fixSrcDestPaths(self._getTargetSrcDest(storeName,variantName,isBackup))
-    
-        from csync import RSync
+
+        try:
+            from csync import RSync
+        except ImportError:
+            from brstores.csync import RSync
 
         if not noPrompt:
             message("Dry run: src={} dest={} flags={}".format(store['src'],store['dest'],store['flags']))

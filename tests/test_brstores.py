@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 """
 Test Script for BrStores package
@@ -20,12 +20,16 @@ bin_path, whocares = split(dirname(realpath('__file__')))
 lib_path = abspath(bin_path)
 path.insert(0, lib_path)
 
-import io
-import StringIO
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 import sys
 from unittest import TestCase, TestLoader, TextTestRunner
 
-from brstores import br
+from brstores.br import BrSync
 from brstores.brstores import SyncError
 from pylib import parent, pushd, popd
 
@@ -84,6 +88,8 @@ def setup_testdirs():
 
 def setUpModule():
     print("setup module")
+    from pylib import context
+    print("{}".format(context('foo').pyVersionStr()))
 
     setup_testdirs()
 
@@ -93,7 +99,7 @@ def setUpModule():
     from os import unlink
     if isfile(DEFAULT_STORE):
         unlink(DEFAULT_STORE)
-    from brstores import BrStores
+    from brstores.brstores import BrStores
     print("Current default JSON file is: {}".format(BrStores().getDefaultJSONStore()))
     BrStores().saveDefaultJSONStore(DEFAULT_STORE)
     pass
@@ -145,10 +151,10 @@ class TestBrStoresClass(TestCase):
         pass
 
     def setUp(self):
-        self.capturedOutput = StringIO.StringIO()     # Create StringIO object
-        sys.stdout = self.capturedOutput              # Redirect sys.stdout
+        self.capturedOutput = StringIO()    # Create StringIO object
+        sys.stdout = self.capturedOutput    # Redirect sys.stdout
         sys.stderr = self.capturedOutput
-        self.brs = br.BrSync()
+        self.brs = BrSync()
         self.brs.testing = True
 
     def tearDown(self):
@@ -162,10 +168,12 @@ class TestBrStoresClass(TestCase):
         with open('run/{}.txt'.format(which), 'w') as mf2:
             mf2.write(self.capturedOutput.getvalue())
 
+        from sys import version_info
+
         if(checkEqual):
-            with open('cmp/{}.txt'.format(which), 'r') as myfile:
+            with open('cmp{}/{}.txt'.format(version_info.major, which), 'rb') as myfile:
                 data = myfile.read()
-            self.assertEqual(self.capturedOutput.getvalue(), data)
+            self.assertEqual(self.capturedOutput.getvalue().encode(), data)
 
     def test_0_init(self):
         print("test init JSON data store logic")
@@ -193,7 +201,7 @@ class TestBrStoresClass(TestCase):
         run('init {} -md'.format(new_store_2))
 
         # get the path of the current default JSON store for later
-        from brstores import BrStores
+        from brstores.brstores import BrStores
         json_path = BrStores().getDefaultJSONStore()
         print(json_path)
         
@@ -534,7 +542,7 @@ class TestBrStoresClass(TestCase):
         #       that stream will be used until the process (this program) finishes,
         #       regardless of whether you reset sys.stdin or not. I need to test
         #       this theory, run it on v3., and consider raising a bug.
-        sys.stdin = StringIO.StringIO("YES\ny\nYes\nSi\nsi")
+        sys.stdin = StringIO("YES\ny\nYes\nSi\nsi")
         # run backup using -j json_store override, no variant specified
         run('b -j {} bt1 -rsoe {}'.format(DEFAULT_BRTEST_STORE, my_output_file))
         # go ahead and set the default json store now that we tested that...
@@ -697,7 +705,7 @@ class TestBrStoresClass(TestCase):
 
         def get_io(command):
             # Create StringIO object
-            tempIO = StringIO.StringIO()
+            tempIO = StringIO()
             # Save current stdout and stderr
             curStdout, curStderr = (sys.stdout, sys.stderr)
             # Redirect to temp IO buffer
