@@ -1,6 +1,67 @@
 ------------------------------------------
 backup tests
 ------------------------------------------
+------------------------------------------
+b
+------------------------------------------
+usage: br b [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
+br b: error: too few arguments
+------------------------------------------
+bu
+------------------------------------------
+usage: br bu [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
+br bu: error: too few arguments
+------------------------------------------
+backup
+------------------------------------------
+usage: br backup [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
+br backup: error: too few arguments
+------------------------------------------
+b -j /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json
+------------------------------------------
+usage: br b [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
+br b: error: too few arguments
+------------------------------------------
+b -h
+------------------------------------------
+usage: br b [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] [-np] store
+
+positional arguments:
+  store                 name of data store
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSONFILE, --jsonfile JSONFILE
+                        name of json store repository
+  -v VARIANT, --variant VARIANT
+                        data store variant name
+  -rsoe REDIRSOE, --redirSOE REDIRSOE
+                        redirect stdout and stderr from rsync to file
+  -np, --noPrompt       rsync no prompt just do it
+------------------------------------------
+backup -if -j /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json bt2
+------------------------------------------
+usage: br [-h] [-d] [-pv]
+          {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump} ...
+br: error: unrecognized arguments: -if
+------------------------------------------
+bu --invalid-flag -j /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json bt3
+------------------------------------------
+usage: br [-h] [-d] [-pv]
+          {i,sdjs,defaults,b,r,as,us,rens,renv,setd,rems,remv,remd,dump} ...
+br: error: unrecognized arguments: --invalid-flag
+------------------------------------------
+b -j /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json non_existant_store_name
+------------------------------------------
+Expected SyncError Exception: 6:I don't know about any store named [non_existant_store_name]...
+------------------------------------------
+b -j /Users/ken/Dropbox/shared/src/script/brstores/tests/test_backup_restore.json bt1 -v non_existant_variant_name
+------------------------------------------
+brstores: Variant [non_existant_variant_name] not found for store [bt1]
+Expected SyncError Exception: 5:Invalid store or variant
+------------------------------------------
+These things should work.
+------------------------------------------
 brstores: Only 1 variant here [def], so using it...
 brstores: Dry run: src=test1/src/ dest=test1/dest flags=
 brstores: rsync returned 0
@@ -41,5 +102,112 @@ brstores: rsync returned 0
 brstores: Do you want to sync [test5/src/] to [test5/dest] using flags []
 brstores: You entered YES, mirroring the data store...
 brstores: rsync returned 0
+
+------------------------------------------
+RSync output
+------------------------------------------
+building file list ... done
+created directory test1/dest
+./
+.gitignore
+bbedit_set_pathvar.scpt
+files.zip
+pfm.py
+r2.py
+hello/
+hello/a.out
+hello/hello.cpp
+html/
+html/divs.html
+html/import.html
+html/markdown.html
+html/script1.html
+html/specials.html
+html/transitions.html
+html/variables.html
+pix/
+pix/aatmini-021.png
+
+building file list ... done
+created directory test1/dest
+./
+.gitignore
+bbedit_set_pathvar.scpt
+files.zip
+pfm.py
+r2.py
+hello/
+hello/a.out
+hello/hello.cpp
+html/
+html/divs.html
+html/import.html
+html/markdown.html
+html/script1.html
+html/specials.html
+html/transitions.html
+html/variables.html
+pix/
+pix/aatmini-021.png
+
+building file list ... done
+
+building file list ... done
+
+building file list ... done
+pfm.py
+html/
+html/divs.html
+html/import.html
+html/markdown.html
+html/script1.html
+html/specials.html
+html/transitions.html
+html/variables.html
+
+building file list ... done
+pfm.py
+html/
+html/divs.html
+html/import.html
+html/markdown.html
+html/script1.html
+html/specials.html
+html/transitions.html
+html/variables.html
+
+building file list ... done
+deleting pix/aatmini-021.png
+deleting pix/
+deleting files.zip
+
+building file list ... done
+deleting pix/aatmini-021.png
+deleting pix/
+deleting files.zip
+./
+
+building file list ... done
+deleting html/variables.html
+deleting html/transitions.html
+deleting html/specials.html
+deleting html/script1.html
+deleting html/markdown.html
+deleting html/import.html
+deleting html/divs.html
+deleting html/
+bbedit_set_pathvar.scpt
+
+building file list ... done
+deleting html/variables.html
+deleting html/transitions.html
+deleting html/specials.html
+deleting html/script1.html
+deleting html/markdown.html
+deleting html/import.html
+deleting html/divs.html
+deleting html/
+./
+bbedit_set_pathvar.scpt
 
 brstores: Setting default store to /Users/ken/Dropbox/shared/src/script/brstores/tests/test_brstores.json
