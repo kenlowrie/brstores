@@ -1,3 +1,8 @@
 run/
 out/
-
+rsoe_backup.txt
+rsoe_restore.txt
+test_backup_restore.json
+test_brstores.json
+*.zip
+unzip_out.txt
