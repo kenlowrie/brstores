@@ -113,7 +113,7 @@ optional arguments:
 ----------------------------------------
 b -h
 ----------------------------------------
-usage: br b [-h] [-j JSONFILE] [-v VARIANT] store
+usage: br b [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
 
 positional arguments:
   store                 name of data store
@@ -124,10 +124,12 @@ optional arguments:
                         name of json store repository
   -v VARIANT, --variant VARIANT
                         data store variant name
+  -rsoe REDIRSOE, --redirSOE REDIRSOE
+                        redirect stdout and stderr from rsync to file
 ----------------------------------------
 bu --help
 ----------------------------------------
-usage: br bu [-h] [-j JSONFILE] [-v VARIANT] store
+usage: br bu [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
 
 positional arguments:
   store                 name of data store
@@ -138,10 +140,12 @@ optional arguments:
                         name of json store repository
   -v VARIANT, --variant VARIANT
                         data store variant name
+  -rsoe REDIRSOE, --redirSOE REDIRSOE
+                        redirect stdout and stderr from rsync to file
 ----------------------------------------
 backup -h
 ----------------------------------------
-usage: br backup [-h] [-j JSONFILE] [-v VARIANT] store
+usage: br backup [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
 
 positional arguments:
   store                 name of data store
@@ -152,10 +156,12 @@ optional arguments:
                         name of json store repository
   -v VARIANT, --variant VARIANT
                         data store variant name
+  -rsoe REDIRSOE, --redirSOE REDIRSOE
+                        redirect stdout and stderr from rsync to file
 ----------------------------------------
 r -h
 ----------------------------------------
-usage: br r [-h] [-j JSONFILE] [-v VARIANT] store
+usage: br r [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
 
 positional arguments:
   store                 name of data store
@@ -166,10 +172,12 @@ optional arguments:
                         name of json store repository
   -v VARIANT, --variant VARIANT
                         data store variant name
+  -rsoe REDIRSOE, --redirSOE REDIRSOE
+                        redirect stdout and stderr from rsync to file
 ----------------------------------------
 re --help
 ----------------------------------------
-usage: br re [-h] [-j JSONFILE] [-v VARIANT] store
+usage: br re [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
 
 positional arguments:
   store                 name of data store
@@ -180,10 +188,12 @@ optional arguments:
                         name of json store repository
   -v VARIANT, --variant VARIANT
                         data store variant name
+  -rsoe REDIRSOE, --redirSOE REDIRSOE
+                        redirect stdout and stderr from rsync to file
 ----------------------------------------
 restore --help
 ----------------------------------------
-usage: br restore [-h] [-j JSONFILE] [-v VARIANT] store
+usage: br restore [-h] [-j JSONFILE] [-v VARIANT] [-rsoe REDIRSOE] store
 
 positional arguments:
   store                 name of data store
@@ -194,6 +204,8 @@ optional arguments:
                         name of json store repository
   -v VARIANT, --variant VARIANT
                         data store variant name
+  -rsoe REDIRSOE, --redirSOE REDIRSOE
+                        redirect stdout and stderr from rsync to file
 ----------------------------------------
 addStore --help
 ----------------------------------------
