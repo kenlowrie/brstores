@@ -1,27 +1,11 @@
 #!/usr/bin/env python
 
 """
-Have a folder with all the variants in it:
-
-test_dirs/
-    test1/
-        /src
-        /dest
-
-dup the test_dirs folder somewhere so I can rm -rf at end for cleanup
-
-test1 - no dest exists
-test2 - directories in sync
-test3 - extra files in src
-test4 - extra files in dest
-test5 - extra files in both
+Unittest for BrStores package
 
 Test design:
 
 20. Add all the stores for the backup/restore operations
-20a. Unzip the test_dirs.zip into the temp/backup and temp/restore areas
-20b. Unzip the test_dirs_backup.zip into temp/results/backup
-20c. Unzip the test_dirs_restore.zip into temp/results/restore
 20d. Test the -j override with backup and restore...
 21a. Test backup test1
 21b. Test backup test2
@@ -33,12 +17,11 @@ Test design:
 21h. Test restore test3
 21i. Test restore test4
 21j. Test restore test5
-22. Remove all the stores for the backup/restore operations
+
+create the real r_res and b_res .zip files
 
 filecmp the backup/* to temp/results/backup
 filecmp the restore/* to temp/results/restore
-
-remove the backup, restore and results folders.
 
 """
 
@@ -52,6 +35,7 @@ path.insert(0, lib_path)
 import io
 import StringIO
 import sys
+from os.path import abspath
 from unittest import TestCase, TestLoader, TextTestRunner
 
 from brstores import br
@@ -59,7 +43,12 @@ from brstores.brstores import SyncError
 from pylib import parent, pushd, popd
 
 DEFAULT_STORE = './test_brstores.json'
+DEFAULT_BRTEST_STORE = abspath('./test_backup_restore.json')
 temp_testdir = ''
+testdirs_backup_dir = ''
+testdirs_restore_dir = ''
+testdirs_backup_results_dir = ''
+testdirs_restore_results_dir = ''
 
 def setup_testdirs():
     from shutil import copy2
@@ -68,22 +57,49 @@ def setup_testdirs():
 
     global temp_testdir
     temp_testdir = mkdtemp(suffix='.test', dir='/var/tmp/')
+    print("Created test directory: {}".format(temp_testdir))
+    
     testdirs_zip = 'test_dirs.zip'
+    testdirs_backup_results_zip = 'test_dirs_b_results.zip'
+    testdirs_restore_results_zip = 'test_dirs_r_results.zip'
+
     testdirs_src = join('.',testdirs_zip)
-    testdirs_dest = join(temp_testdir,testdirs_zip)
-    #try:
-    #    copy2(testdirs_src, testdirs_dest)
-    #except OSError as why:
-    #    print("Error copying testdirs.zip file: [{}]".format(str(why)))
-    #    raise
-    from os import system
-    system('unzip {} -d {}'.format(testdirs_src, temp_testdir))
+    testdirs_b_res_src = join('.', testdirs_backup_results_zip)
+    testdirs_r_res_src = join('.', testdirs_restore_results_zip)
+
+    global testdirs_backup_dir, testdirs_restore_dir
+    global testdirs_backup_results_dir, testdirs_restore_results_dir
+
+    testdirs_backup_dir = join(temp_testdir, "backup")
+    testdirs_restore_dir = join(temp_testdir, "restore")
+    testdirs_backup_results_dir = join(temp_testdir, "results", "backup")
+    testdirs_restore_results_dir = join(temp_testdir, "results", "restore")
+
+    from os import system, makedirs
+    
+    makedirs(testdirs_backup_dir)
+    makedirs(testdirs_restore_dir)
+    makedirs(testdirs_backup_results_dir)
+    makedirs(testdirs_restore_results_dir)
+
+    output = './unzip_out.txt'
+    print("Unzipping: {} to {}".format(testdirs_src, testdirs_backup_dir))
+    system('unzip {} -d {} 1>{} 2>&1'.format(testdirs_src, testdirs_backup_dir, output))
+
+    print("Unzipping: {} to {}".format(testdirs_src, testdirs_restore_dir))
+    system('unzip {} -d {} 1>>{} 2>&1'.format(testdirs_src, testdirs_restore_dir, output))
+
+    print("Unzipping: {} to {}".format(testdirs_b_res_src, testdirs_backup_results_dir))
+    system('unzip {} -d {} 1>>{} 2>&1'.format(testdirs_b_res_src, testdirs_backup_results_dir, output))
+
+    print("Unzipping: {} to {}".format(testdirs_r_res_src, testdirs_restore_results_dir))
+    system('unzip {} -d {} 1>>{} 2>&1'.format(testdirs_r_res_src, testdirs_restore_results_dir, output))
 
 def setUpModule():
     print("setup module")
-    
-    #setup_testdirs()
-    
+
+    setup_testdirs()
+
     # remove the temp_brstores.json if it exists (here and teardown)
     # should I remember and reset the default store? Probably...
     from os.path import isfile
@@ -95,21 +111,34 @@ def setUpModule():
     BrStores().saveDefaultJSONStore(DEFAULT_STORE)
     pass
 
+def cleanUpTempTestDir(testdir):
+    from os import walk, remove, rmdir
+    from os.path import join
+
+    for root, dirs, files in walk(testdir, topdown=False):
+        for name in files:
+            #print('unlink {}'.format(join(root,name)))
+            remove(join(root, name))
+        for name in dirs:
+            #print('rmdir {}'.format(join(root,name)))
+            rmdir(join(root, name))
+
 def tearDownModule():
     print("teardown module")
     global temp_testdir
 
     if pushd(parent(temp_testdir)):
-        from os import getcwd, system
+        from os import rmdir, getcwd
 
-        # TODO: make this pure python, no rm -rf...
+        print("CWD = {}".format(getcwd()))
     
-        print("Removing {}".format(getcwd()))
+        print("Removing {}".format(temp_testdir))
 
-        system("echo rm -rf {}".format(temp_testdir))
+        cleanUpTempTestDir(temp_testdir)
+        rmdir(temp_testdir)
 
         popd()
-        print("{}".format(getcwd()))
+        print("CWD = {}".format(getcwd()))
     else:
         print("Unable to chdir to {}".format(parent(temp_testdir)))
 
@@ -410,6 +439,115 @@ class TestBrStoresClass(TestCase):
 
         self.process('variants')
 
+    def unlink_if_exists(self, filename):
+        from os import unlink
+        from os.path import isfile
+
+        if isfile(filename):
+            unlink(filename)
+
+    def test_40_setup_br_stores(self):
+        separate("setup backup/restore stores")
+        run = lambda cmd: self.brs.run(cmd.split())
+
+        self.unlink_if_exists(DEFAULT_BRTEST_STORE)
+
+        run('sdjs {}'.format(DEFAULT_BRTEST_STORE))
+
+        run('as bt1 test1/src test1/dest')
+        run('as bt2 test2/src test2/dest -v but2')
+        run('as bt3 test3/src test3/dest -v but3')
+        run('as bt4 test4/src test4/dest --variant but4')
+        run('as bt5 test5/src test5/dest --variant but5')
+        run('dump')
+
+        run('as rt1 test1/new test1/src')
+        run('as rt2 test2/src test2/dest -v rut2')
+        run('as rt3 test3/src test3/dest -v rut3')
+        run('as rt4 test4/src test4/dest --variant rut4')
+        run('as rt5 test5/src test5/dest --variant rut5')
+        run('dump')
+
+        run('sdjs {}'.format(DEFAULT_STORE))
+        self.process('brsetup')
+
+    # TODO: Is this being used?
+    def dump_to_stdout(self, filename):
+        with open(filename, 'r') as fp:
+            data = fp.read()
+
+        separate("RSync output")
+        print(data)
+
+    def test_41_backup(self):
+        separate("backup tests")
+        run = lambda cmd: self.brs.run(cmd.split())
+
+        my_output_file = abspath('./rsoe_backup.txt')
+        self.unlink_if_exists(my_output_file)
+    
+        global testdirs_backup_dir
+        pushd(testdirs_backup_dir)
+
+        sys.stdin = StringIO.StringIO("y\nY\nYes\nSi\nsi\ny\nY\nYes\nSi\nsi\n")
+
+        run('b -j {} bt1 -rsoe {}'.format(DEFAULT_BRTEST_STORE, my_output_file))
+
+        run('sdjs {}'.format(DEFAULT_BRTEST_STORE))
+
+        run('bu bt2 --redirSOE {}'.format(my_output_file))
+        run('backup bt3 -v but3 -rsoe {}'.format(my_output_file))
+        run('bu bt4 --variant but4 --redirSOE {}'.format(my_output_file))
+        run('backup -rsoe {} -v but5 bt5'.format(my_output_file))
+
+        popd()
+
+        #TODO: why isn't this working? when i later try to read, it fails...
+        sys.stdin = sys.__stdin__
+        #self.dump_to_stdout(my_output_file)
+        run('sdjs {}'.format(DEFAULT_STORE))
+
+        self.process('backup')
+
+    def test_42_restore(self):
+        separate("restore tests")
+        run = lambda cmd: self.brs.run(cmd.split())
+        
+        my_output_file = abspath('./rsoe_restore.txt')
+        self.unlink_if_exists(my_output_file)
+    
+        global testdirs_restore_dir
+        pushd(testdirs_restore_dir)
+
+        sys.stdin = StringIO.StringIO("YES\ny\nYes\nSi\nsi")
+        #print("read: {}".format(sys.stdin.readline()))
+
+        run('r -j {} rt1 -rsoe {}'.format(DEFAULT_BRTEST_STORE, my_output_file))
+
+        run('sdjs {}'.format(DEFAULT_BRTEST_STORE))
+
+        run('re rt2 --redirSOE {}'.format(my_output_file))
+        run('restore rt3 -v rut3 -rsoe {}'.format(my_output_file))
+        run('re rt4 --variant rut4 --redirSOE {}'.format(my_output_file))
+        run('restore -rsoe {} -v rut5 rt5'.format(my_output_file))
+
+        popd()
+
+        sys.stdin = sys.__stdin__
+
+        run('sdjs {}'.format(DEFAULT_STORE))
+
+        self.process('restore')
+
+    def test_43_teardown_br(self):
+        separate("teardown backup/restore tests")
+        run = lambda cmd: self.brs.run(cmd.split())
+        
+        run('sdjs {}'.format(DEFAULT_BRTEST_STORE))
+        
+        run('sdjs {}'.format(DEFAULT_STORE))
+
+        self.process('brteardown')
 
     def test_json_data_store_optional(self):
         separate("test json data store optional")
@@ -512,7 +650,7 @@ class TestBrStoresClass(TestCase):
         self.process('pv')
 
     def test_skeleton(self):
-        print("this is a skeleton test")
+        separate("this is a skeleton test")
         run = lambda cmd: self.brs.run(cmd.split())
 
         # Invalid / Missing parameter tests
