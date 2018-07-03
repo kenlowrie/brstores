@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 """
 Test Script for BrStores package
@@ -9,16 +9,28 @@ when running on whatever Linux variants I can get on Travis CI.
 """
 
 """
-This next section adds the parent path of this test script to the beginning of
+This next section adds the package path of brstores to the beginning of
 PYTHONPATH, so that when any of the scripts within the BrStores package are
-referenced, they will load from here, and not from whatever happens to be installed
-on the system.
+referenced, they will load from there, and not from whatever happens to be 
+installed on the system. Note that this allows a non-conventional way of
+loading package modules in that you don't have to provide explicit paths
+when running on Python 3. e.g. 
+
+    from br import BrSync 
+instead of 
+    from brstores.br import BrSync
+
+TODO: Should I try to put it back to the parent and see if that works on
+both v2 and v3 Python? I think it might...
+
+WHEN I DO THIS SYSTEM DOESN'T DO THE REDIR OF STDIN. WTF???
 """
 from sys import path
-from os.path import dirname, abspath, realpath, split
+from os.path import dirname, abspath, realpath, split, join
 bin_path, whocares = split(dirname(realpath('__file__')))
 lib_path = abspath(bin_path)
-path.insert(0, lib_path)
+path.insert(0, join(lib_path, 'brstores'))
+#path.insert(0, lib_path)
 
 
 try:
@@ -29,8 +41,8 @@ except ImportError:
 import sys
 from unittest import TestCase, TestLoader, TextTestRunner
 
-from brstores.br import BrSync
-from brstores.brstores import SyncError
+from br import BrSync
+from brstores import SyncError
 from pylib import parent, pushd, popd
 
 DEFAULT_STORE = './test_brstores.json'
@@ -99,7 +111,7 @@ def setUpModule():
     from os import unlink
     if isfile(DEFAULT_STORE):
         unlink(DEFAULT_STORE)
-    from brstores.brstores import BrStores
+    from brstores import BrStores
     print("Current default JSON file is: {}".format(BrStores().getDefaultJSONStore()))
     BrStores().saveDefaultJSONStore(DEFAULT_STORE)
     pass
@@ -201,7 +213,7 @@ class TestBrStoresClass(TestCase):
         run('init {} -md'.format(new_store_2))
 
         # get the path of the current default JSON store for later
-        from brstores.brstores import BrStores
+        from brstores import BrStores
         json_path = BrStores().getDefaultJSONStore()
         print(json_path)
         
