@@ -31,6 +31,7 @@ try:
 except ImportError:
     from brstores.brstores import BrStores, SyncError, message, me
 
+
 class BrSync(object):
     def __init__(self):
         from argparse import ArgumentParser
