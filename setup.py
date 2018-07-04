@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='brstores',
-      version='0.3.8',
+      version='0.8.3',
       description='Directory synchronizer Python Application',
       url='https://github.com/kenlowrie/brstores',
       author='Ken Lowrie',
