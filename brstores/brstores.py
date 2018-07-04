@@ -214,10 +214,7 @@ class BrStores(object):
 
         store = self._fixSrcDestPaths(self._getTargetSrcDest(storeName,variantName,isBackup))
 
-        try:
-            from csync import RSync
-        except ImportError:
-            from brstores.csync import RSync
+        from .csync import RSync
 
         if not noPrompt:
             message("Dry run: src={} dest={} flags={}".format(store['src'],store['dest'],store['flags']))
