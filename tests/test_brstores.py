@@ -9,33 +9,23 @@ when running on whatever Linux variants I can get on Travis CI.
 """
 
 """
-This next section adds the package path of brstores to the beginning of
-PYTHONPATH, so that when any of the scripts within the BrStores package are
-referenced, they will load from there, and not from whatever happens to be 
-installed on the system. Note that this allows a non-conventional way of
-loading package modules in that you don't have to provide explicit paths
-when running on Python 3. e.g. 
-
-    from br import BrSync 
-instead of 
-    from brstores.br import BrSync
-
-This is only valid for the unittests, however. When using this package
-in normal circumstances, you still have to be explicit when importing
-package scripts, and deal with the v2 vs v3 differences...
-
-TEST LOADING BOTH PACKAGES IN IPYTHON OUT OF THE SITE-PACKAGES AREA
-Do they both work if I import brstores? brstores.br, etc.?
-
+This next section adds the parent path of this test script to the beginning
+of PYTHONPATH, simulating the package that is here being PIP installed.
+When any of the scripts within the BrStores package are referenced, they will 
+load from here, and not from whatever happens to be installed on the system. 
 """
+
 from sys import path
 from os.path import dirname, abspath, realpath, split, join
 bin_path, whocares = split(dirname(realpath('__file__')))
 lib_path = abspath(bin_path)
-path.insert(0, join(lib_path, 'brstores'))
-#path.insert(0, lib_path)
+path.insert(0, lib_path)
+print("BrStores Package unittest")
+print("PYTHONPATH=")
+for item in path:
+    print('  {}'.format(item))
 
-
+# StringIO object in different locations depending on Python version
 try:
     from StringIO import StringIO
 except ImportError:
@@ -44,8 +34,8 @@ except ImportError:
 import sys
 from unittest import TestCase, TestLoader, TextTestRunner
 
-from br import BrSync
-from brstores import SyncError
+from brstores.br import BrSync
+from brstores.brstores import SyncError
 from pylib import parent, pushd, popd
 
 DEFAULT_STORE = './test_brstores.json'
@@ -122,7 +112,7 @@ def setUpModule():
     delete_if_exists(DEFAULT_STORE)
     delete_if_exists(DEFAULT_BRTEST_STORE)
 
-    from brstores import BrStores
+    from brstores.brstores import BrStores
     print("Current default JSON file is: {}".format(BrStores().getDefaultJSONStore()))
     BrStores().saveDefaultJSONStore(DEFAULT_STORE)
 
@@ -232,7 +222,7 @@ class TestBrStoresClass(TestCase):
         run('init {} -md'.format(new_store_2))
 
         # get the path of the current default JSON store for later
-        from brstores import BrStores
+        from brstores.brstores import BrStores
         json_path = BrStores().getDefaultJSONStore()
         print(json_path)
         
