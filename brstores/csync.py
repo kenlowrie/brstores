@@ -10,7 +10,7 @@ which you would like to keep mirrored.
 
 from os import system
 from os.path import isdir, abspath
-from sys import argv, exit, stdin
+from sys import argv, exit
 
 import pylib
 
@@ -70,6 +70,7 @@ class RSync:
                                                                                self.destination,
                                                                                self.flags))
 
+            from sys import stdin
             answer = stdin.readline().strip()
 
             if answer.lower() not in ["yes", "y", "si"]:
