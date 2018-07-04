@@ -8,6 +8,7 @@ setup(name='brstores',
       author_email='ken@kenlowrie.com',
       license='Apache',
       packages=['brstores'],
+      install_requires=['pylib_kenl380'],
       entry_points = {
         'console_scripts': ['br=brstores.br:brsync_entry'],
       },
