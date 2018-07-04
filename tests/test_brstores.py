@@ -20,10 +20,13 @@ when running on Python 3. e.g.
 instead of 
     from brstores.br import BrSync
 
-TODO: Should I try to put it back to the parent and see if that works on
-both v2 and v3 Python? I think it might...
+This is only valid for the unittests, however. When using this package
+in normal circumstances, you still have to be explicit when importing
+package scripts, and deal with the v2 vs v3 differences...
 
-WHEN I DO THIS SYSTEM DOESN'T DO THE REDIR OF STDIN. WTF???
+TEST LOADING BOTH PACKAGES IN IPYTHON OUT OF THE SITE-PACKAGES AREA
+Do they both work if I import brstores? brstores.br, etc.?
+
 """
 from sys import path
 from os.path import dirname, abspath, realpath, split, join
@@ -52,6 +55,13 @@ testdirs_backup_dir = ''
 testdirs_restore_dir = ''
 testdirs_backup_results_dir = ''
 testdirs_restore_results_dir = ''
+
+def delete_if_exists(filename):
+    from os import unlink
+    from os.path import isfile
+
+    if isfile(filename):
+        unlink(filename)
 
 def setup_testdirs():
     from shutil import copy2
@@ -105,16 +115,16 @@ def setUpModule():
 
     setup_testdirs()
 
-    # remove the temp_brstores.json if it exists (here and teardown)
-    # should I remember and reset the default store? Probably...
-    from os.path import isfile
-    from os import unlink
-    if isfile(DEFAULT_STORE):
-        unlink(DEFAULT_STORE)
+    # Because I added the package path to the beginning of PYTHONPATH
+    # at the start, I don't have to remember to reset the default store...
+
+    # remove any pre-existing temp files from a failed previous run...
+    delete_if_exists(DEFAULT_STORE)
+    delete_if_exists(DEFAULT_BRTEST_STORE)
+
     from brstores import BrStores
     print("Current default JSON file is: {}".format(BrStores().getDefaultJSONStore()))
     BrStores().saveDefaultJSONStore(DEFAULT_STORE)
-    pass
 
 def cleanUpTempTestDir(testdir):
     from os import walk, remove, rmdir
@@ -146,6 +156,10 @@ def tearDownModule():
         print("CWD = {}".format(getcwd()))
     else:
         print("Unable to chdir to {}".format(parent(temp_testdir)))
+
+    # remove any temp files from the run ...
+    delete_if_exists(DEFAULT_STORE)
+    delete_if_exists(DEFAULT_BRTEST_STORE)
 
 def separate(message):
     print('{0}\n{1}\n{0}'.format('-' * 42, message))
@@ -206,6 +220,11 @@ class TestBrStoresClass(TestCase):
         new_store_1 = './test_make_new_store.json'
         # This store will be put into the brstores/ folder because no path given
         new_store_2 = 'test_make_new_store_make_default.json'
+
+        # Remove the temp json stores from a prior failed run...
+        delete_if_exists(new_store_1)
+        delete_if_exists(new_store_2)
+
         run('i {}'.format(new_store_1))
         print("Newly created JSON store contents:")
         run('dump -j {}'.format(new_store_1))
@@ -233,13 +252,11 @@ class TestBrStoresClass(TestCase):
             except SyncError as se:
                 print("Expected SyncError Exception: {}:{}".format(se.errno,se.errmsg))
 
-        from os import unlink
         from os.path import isfile
         for file in [new_store_1, json_path]:
             print("Removing {}".format(file))
+            delete_if_exists(file)
 
-        unlink(new_store_1)
-        unlink(json_path)
         self.assertEqual(isfile(new_store_1),False)
         self.assertEqual(isfile(json_path),False)
         self.process('init')
@@ -446,18 +463,11 @@ class TestBrStoresClass(TestCase):
 
         self.process('variants')
 
-    def unlink_if_exists(self, filename):
-        from os import unlink
-        from os.path import isfile
-
-        if isfile(filename):
-            unlink(filename)
-
     def test_40_setup_br_stores(self):
         separate("setup backup/restore stores")
         run = lambda cmd: self.brs.run(cmd.split())
 
-        self.unlink_if_exists(DEFAULT_BRTEST_STORE)
+        delete_if_exists(DEFAULT_BRTEST_STORE)
 
         run('sdjs {}'.format(DEFAULT_BRTEST_STORE))
 
@@ -543,7 +553,7 @@ class TestBrStoresClass(TestCase):
         separate('These things should work.')
         
         my_output_file = abspath('./rsoe_backup.txt')
-        self.unlink_if_exists(my_output_file)
+        delete_if_exists(my_output_file)
     
         global testdirs_backup_dir
         pushd(testdirs_backup_dir)
@@ -606,7 +616,7 @@ class TestBrStoresClass(TestCase):
         separate('These things should work.')
 
         my_output_file = abspath('./rsoe_restore.txt')
-        self.unlink_if_exists(my_output_file)
+        delete_if_exists(my_output_file)
     
         global testdirs_restore_dir
         pushd(testdirs_restore_dir)
