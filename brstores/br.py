@@ -14,7 +14,6 @@ logging.basicConfig(format='%(module)s:%(levelname)s:%(message)s')
 
 """
 TODO:
-    Write the unittests
     Write the docstrings
     Package this app, and rely on the pylib package. Once that works, apply this
         to the avscript app.
