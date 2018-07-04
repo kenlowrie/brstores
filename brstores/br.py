@@ -255,7 +255,7 @@ class BrSync(object):
         return BrStores(self.args.jsonfile).addStore(self.args.store,
                                                      self.args.srcPath,
                                                      self.args.destPath,
-                                                     self.args.flags.strip().rstrip(),
+                                                     self.args.flags.strip(),
                                                      variantName,
                                                      updateStore)
 
