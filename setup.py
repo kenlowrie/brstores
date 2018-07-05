@@ -1,4 +1,5 @@
 from setuptools import setup
+from sys import version_info
 
 setup(name='brstores',
       version='0.8.3',
@@ -10,6 +11,8 @@ setup(name='brstores',
       packages=['brstores'],
       install_requires=['pylib_kenl380'],
       entry_points = {
-        'console_scripts': ['br=brstores.br:brsync_entry'],
+        'console_scripts': ['br=brstores.br:brsync_entry',
+                            'br{}=brstores.br:brsync_entry'.format(version_info.major)
+                           ],
       },
       zip_safe=False)
