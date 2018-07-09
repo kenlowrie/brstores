@@ -12,7 +12,7 @@ from os import system
 from os.path import isdir, abspath
 from sys import argv, exit
 
-import pylib
+import kenl380.pylib as pylib
 
 def context():
     """returns the context object for this script."""

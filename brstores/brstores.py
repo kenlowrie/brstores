@@ -22,7 +22,7 @@ Need a way to timestamp or identify revision to help prevent out of sync issues
 
 import logging
 
-import pylib
+import kenl380.pylib as pylib
 
 
 # The class implementation for the exception handling in the underlying classes

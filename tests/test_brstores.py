@@ -36,7 +36,7 @@ from unittest import TestCase, TestLoader, TextTestRunner
 
 from brstores.br import BrSync
 from brstores.brstores import SyncError
-from pylib import parent, pushd, popd
+from kenl380.pylib import parent, pushd, popd
 
 DEFAULT_STORE = './test_brstores.json'
 DEFAULT_BRTEST_STORE = abspath('./test_backup_restore.json')
@@ -100,7 +100,7 @@ def setup_testdirs():
 
 def setUpModule():
     print("setup module")
-    from pylib import context
+    from kenl380.pylib import context
     print("{}".format(context('foo').pyVersionStr()))
 
     setup_testdirs()
