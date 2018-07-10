@@ -1,11 +1,14 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 Test Script for BrStores package
 
-This script contains both the unittests and functional tests for the BrStores package.
-So far, it has only been run on Mac OS X, but hopefully, it won't require much change
-when running on whatever Linux variants I can get on Travis CI.
+This script contains both the unittests and functional tests for the 
+BrStores package. Technically, it's more of a black box testing suite,
+since the way BrStores is designed to work, you have to build up the
+JSON data store file it uses to identify backup and restore targets.
+So far, it has only been run on Mac OS X, but hopefully, it won't require 
+much change when running on whatever Linux variants I can get on Travis CI.
 """
 
 """
@@ -17,7 +20,8 @@ load from here, and not from whatever happens to be installed on the system.
 
 from sys import path
 from os.path import dirname, abspath, realpath, split, join
-bin_path, whocares = split(dirname(realpath('__file__')))
+TESTDIR = dirname(realpath(__file__))
+bin_path, whocares = split(TESTDIR)
 lib_path = abspath(bin_path)
 path.insert(0, lib_path)
 print("BrStores Package unittest")
@@ -38,8 +42,8 @@ from brstores.br import BrSync
 from brstores.brstores import SyncError
 from kenl380.pylib import parent, pushd, popd
 
-DEFAULT_STORE = './test_brstores.json'
-DEFAULT_BRTEST_STORE = abspath('./test_backup_restore.json')
+DEFAULT_STORE = join(TESTDIR, 'test_brstores.json')
+DEFAULT_BRTEST_STORE = abspath(join(TESTDIR, 'test_backup_restore.json'))
 temp_testdir = ''
 testdirs_backup_dir = ''
 testdirs_restore_dir = ''
@@ -62,9 +66,9 @@ def setup_testdirs():
     temp_testdir = mkdtemp(suffix='.test', dir='/var/tmp/')
     print("Created test directory: {}".format(temp_testdir))
     
-    testdirs_zip = 'test_dirs.zip'
-    testdirs_backup_results_zip = 'test_dirs_b_results.zip'
-    testdirs_restore_results_zip = 'test_dirs_r_results.zip'
+    testdirs_zip = 'tests/test_dirs.zip'
+    testdirs_backup_results_zip = 'tests/test_dirs_b_results.zip'
+    testdirs_restore_results_zip = 'tests/test_dirs_r_results.zip'
 
     testdirs_src = join('.',testdirs_zip)
     testdirs_b_res_src = join('.', testdirs_backup_results_zip)
@@ -85,7 +89,7 @@ def setup_testdirs():
     makedirs(testdirs_backup_results_dir)
     makedirs(testdirs_restore_results_dir)
 
-    output = './unzip_out.txt'
+    output = './tests/unzip_out.txt'
     print("Unzipping: {} to {}".format(testdirs_src, testdirs_backup_dir))
     system('unzip {} -d {} 1>{} 2>&1'.format(testdirs_src, testdirs_backup_dir, output))
 
@@ -181,13 +185,13 @@ class TestBrStoresClass(TestCase):
         del self.capturedOutput
 
     def process(self, which, checkEqual=True):
-        with open('run/{}.txt'.format(which), 'w') as mf2:
+        with open('tests/run/{}.txt'.format(which), 'w') as mf2:
             mf2.write(self.capturedOutput.getvalue())
 
         from sys import version_info
 
         if(checkEqual):
-            with open('cmp{}/{}.txt'.format(version_info.major, which), 'rb') as myfile:
+            with open('tests/cmp{}/{}.txt'.format(version_info.major, which), 'rb') as myfile:
                 data = myfile.read()
             self.assertEqual(self.capturedOutput.getvalue().encode(), data)
 
@@ -542,7 +546,7 @@ class TestBrStoresClass(TestCase):
         # And here's the stuff that should work.
         separate('These things should work.')
         
-        my_output_file = abspath('./rsoe_backup.txt')
+        my_output_file = abspath('./tests/rsoe_backup.txt')
         delete_if_exists(my_output_file)
     
         global testdirs_backup_dir
@@ -605,7 +609,7 @@ class TestBrStoresClass(TestCase):
         # And here's the stuff that should work.
         separate('These things should work.')
 
-        my_output_file = abspath('./rsoe_restore.txt')
+        my_output_file = abspath('./tests/rsoe_restore.txt')
         delete_if_exists(my_output_file)
     
         global testdirs_restore_dir
