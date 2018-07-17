@@ -1,4 +1,4 @@
-pytest==3.4.2
-tox==2.9.1
+pytest==3.6.3
+tox==3.1.1
 kenl380
 kenl380.pylib
