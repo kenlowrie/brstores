@@ -210,18 +210,18 @@ class BrStores(object):
         return 0
 
     def syncOperation(self, storeName, variantName, isBackup=True, redirsoe=None, noPrompt=False):
-        operStr = "backup" if isBackup else "restore"
+        operStr = "BACKUP" if isBackup else "RESTORE"
 
         store = self._fixSrcDestPaths(self._getTargetSrcDest(storeName,variantName,isBackup))
 
         from .csync import RSync
 
         if not noPrompt:
-            message("Dry run: src={} dest={} flags={}".format(store['src'],store['dest'],store['flags']))
+            message("Dry run: operation={} src={} dest={} flags={}".format(operStr, store['src'],store['dest'],store['flags']))
     
         cs = RSync(store['src'],store['dest'],store['flags'],me, redirsoe)
     
-        return cs.query(askFirst=not noPrompt)
+        return cs.query(operStr, askFirst=not noPrompt)
         
     def addStore(self,store,src,dest,flags,variant,update):
         if(variant == BrStores.DEF_VARIANT_KEY):

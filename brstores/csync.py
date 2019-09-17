@@ -43,30 +43,31 @@ class RSync:
         return '' if not self.redirpath else '1>>{} 2>&1'.format(self.redirpath)
 
     def status(self):
-        rc = system("rsync -n -va --delete {} {} {} {}".format(self.flags, 
-                                                               self.source, 
-                                                               self.destination,
-                                                               self.get_redir_flags()))
+        rc = system("rsync -n -va --delete {} \"{}\" \"{}\" {}".format(self.flags, 
+                                                                       self.source, 
+                                                                       self.destination,
+                                                                       self.get_redir_flags()))
 
         message("rsync returned %d\r\n" % rc)
 
         return rc
 
     def mirror(self):
-        rc = system("rsync -va --delete {} {} {} {}".format(self.flags, 
-                                                            self.source,
-                                                            self.destination,
-                                                            self.get_redir_flags()))
+        rc = system("rsync -va --delete {} \"{}\" \"{}\" {}".format(self.flags, 
+                                                                    self.source,
+                                                                    self.destination,
+                                                                    self.get_redir_flags()))
 
         message("rsync returned %d\r\n" % rc)
 
         return rc
 
-    def query(self, askFirst=True):
+    def query(self, operStr, askFirst=True):
         if askFirst:
             self.status()
 
-            message("Do you want to sync [{}] to [{}] using flags [{}]".format(self.source,
+            message("Do you want to [{}] [{}] to [{}] using flags [{}]".format(operStr,
+                                                                               self.source,
                                                                                self.destination,
                                                                                self.flags))
 
@@ -80,9 +81,10 @@ class RSync:
             message("You entered YES, mirroring the data store...")
 
         else:
-            message("Syncing [{}] to [{}] using flags [{}]".format(self.source,
-                                                                   self.destination,
-                                                                   self.flags))
+            message("Performing [{}] [{}] to [{}] using flags [{}]".format(operStr,
+                                                                           self.source,
+                                                                           self.destination,
+                                                                           self.flags))
 
         return self.mirror()
 
