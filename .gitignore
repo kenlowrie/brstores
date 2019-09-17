@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 brstores.json
 brstores.default
+.DS_Store
+.vscode/
 
 # C extensions
 *.so
